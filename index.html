@@ -279,7 +279,9 @@ select option{background:#fff}
   .card+.card,.card+.mt1,.mt1{margin-top:8px!important}
   .card-title{font-size:9px!important;margin-bottom:0.75rem!important;letter-spacing:0.08em!important}
 
-  /* ── Hide desktop "Add expense" card on dashboard (FAB handles it) ── */
+  /* ── Hide desktop stat grid on mobile — hero card shows instead ── */
+  #pg-dashboard .stat-grid{display:none!important}
+  #mob-nw-hero{display:block!important}
   #pg-dashboard .card:has(#e-date){display:none!important}
 
   /* ── Grids collapse ── */
@@ -346,28 +348,24 @@ select option{background:#fff}
   .cc-tx-row>span:nth-child(3),.cc-tx-row>span:nth-child(5){display:none!important}
   .cc-tx-row>span:nth-child(4){font-size:13px!important;font-weight:700!important;text-align:right!important}
 
-  /* ── PORTFOLIO — compact single row per holding ── */
+  /* ── PORTFOLIO — clean card rows on mobile ── */
   .port-head{display:none!important}
   .port-row{
-    display:grid!important;
-    grid-template-columns:1fr auto auto 28px!important;
-    gap:0 10px!important;
-    padding:11px 0!important;
-    align-items:center!important;
+    display:block!important;
+    padding:12px 0!important;
     border-bottom:1px solid var(--cream2)!important;
+    position:relative!important;
   }
-  /* Hide profile, qty, buy price columns — show only name, value, gain */
+  /* Show mobile inline values, hide desktop columns */
+  .port-mob-inline{display:flex!important}
   .port-row>span:nth-child(2),
   .port-row>span:nth-child(3),
-  .port-row>span:nth-child(4){display:none!important}
-  /* Current price input — compact */
-  .port-row>div:nth-child(5){display:none!important}
-  .port-row>span:nth-child(6){font-size:13px!important;font-weight:700!important;text-align:right!important;white-space:nowrap!important}
-  .port-row>div:nth-child(7) div:first-child{font-size:12px!important;font-weight:700!important}
-  .port-row>div:nth-child(7) div:last-child{font-size:10px!important}
-  /* Portfolio summary cards — 2 per row */
-  #pg-portfolio>.card:first-of-type{padding:0.9rem!important}
-  .port-refresh{display:none!important}
+  .port-row>span:nth-child(4),
+  .port-row>div:nth-child(5),
+  .port-row>span:nth-child(6),
+  .port-row>div:nth-child(7){display:none!important}
+  /* Delete button */
+  .port-row>button{position:absolute!important;top:10px!important;right:0!important}
 
   /* ── Fixed expense rows ── */
   .frow{grid-template-columns:1fr 90px 28px!important}
@@ -596,6 +594,7 @@ select option{background:#fff}
     <div class="sb-sec">Wealth</div>
     <div class="ni"    onclick="nav('goals',this)"><span class="ni-ic">◎</span><span>Goals & investments</span></div>
     <div class="ni"    onclick="nav('portfolio',this)"><span class="ni-ic">◬</span><span>Portfolio tracker</span></div>
+    <div class="ni"    onclick="nav('networth',this)"><span class="ni-ic">◑</span><span>Net worth</span></div>
     <div class="sb-sec">Settings</div>
     <div class="ni"    onclick="nav('categories',this)"><span class="ni-ic">◈</span><span>Categories</span></div>
     <div class="ni"    onclick="nav('backup',this)"><span class="ni-ic">⬡</span><span>Data & backup</span></div>
@@ -624,6 +623,16 @@ select option{background:#fff}
   <div class="page on" id="pg-dashboard">
     <div class="pg-title" id="greeting">Good morning.</div>
     <div class="pg-sub">Your complete financial picture at a glance.</div>
+    <!-- Mobile-only hero card -->
+    <div id="mob-nw-hero" style="display:none;background:var(--ink);border-radius:16px;padding:1.1rem 1.2rem;margin-bottom:10px;color:#fff">
+      <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Net worth</div>
+      <div style="font-size:28px;font-weight:700;font-family:var(--mono);letter-spacing:-1px" id="mob-nw-val">₹0</div>
+      <div style="display:flex;gap:16px;margin-top:10px">
+        <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Income</div><div style="font-size:14px;font-weight:600;font-family:var(--mono);color:rgba(255,255,255,0.85)" id="mob-inc-val">₹0</div></div>
+        <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Spent</div><div style="font-size:14px;font-weight:600;font-family:var(--mono);color:#ff8c6a" id="mob-spent-val">₹0</div></div>
+        <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Saved</div><div style="font-size:14px;font-weight:600;font-family:var(--mono)" id="mob-saved-val" style="color:#4ecdc4">₹0</div></div>
+      </div>
+    </div>
     <div class="stat-grid" id="stats"></div>
     <div class="g2">
       <div>
@@ -846,6 +855,110 @@ select option{background:#fff}
         <button class="btn-sage" onclick="addGoal()">Add goal</button>
       </div>
       <div class="err" id="g-err"></div>
+    </div>
+
+    <!-- ULIP Plans -->
+    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin:1.4rem 0 8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">ULIP plans</div>
+    <div class="card">
+      <div id="ulip-list"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 120px auto;gap:10px;margin-top:12px;align-items:center">
+        <input id="ulip-name" placeholder="Plan name (e.g. LIC SIIP)">
+        <input id="ulip-insurer" placeholder="Insurer">
+        <input id="ulip-fundval" type="number" placeholder="Current fund value ₹" min="0">
+        <input id="ulip-premium" type="number" placeholder="Annual premium ₹" min="0">
+        <button class="btn-sage" onclick="addUlip()">+ Add</button>
+      </div>
+      <div class="err" id="ulip-err"></div>
+    </div>
+
+    <!-- SGB -->
+    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin:1.4rem 0 8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">Sovereign Gold Bonds (SGB)</div>
+    <div class="card">
+      <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">Current gold price: ₹<input id="sgb-gold-price" type="number" value="${S.sgbGoldPrice||9200}" min="0" style="width:100px;display:inline-block;padding:4px 8px;font-size:13px" oninput="updateSgbGoldPrice(this.value)"> /gram · SGBs track 1g gold per unit</div>
+      <div id="sgb-list"></div>
+      <div style="display:grid;grid-template-columns:1fr 120px 100px 120px auto;gap:10px;margin-top:12px;align-items:center">
+        <input id="sgb-name" placeholder="Series (e.g. SGB 2021-22 S3)">
+        <input id="sgb-units" type="number" placeholder="Units" min="1" step="any">
+        <input id="sgb-issue" type="number" placeholder="Issue price ₹" min="0" step="any">
+        <input id="sgb-maturity" type="text" placeholder="Maturity (e.g. 2029-03)">
+        <button class="btn-sage" onclick="addSgb()">+ Add</button>
+      </div>
+      <div class="err" id="sgb-err"></div>
+    </div>
+
+    <!-- PPF / EPF -->
+    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin:1.4rem 0 8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">PPF / EPF / NPS</div>
+    <div class="card">
+      <div id="ppf-list"></div>
+      <div style="display:grid;grid-template-columns:120px 1fr 140px 140px auto;gap:10px;margin-top:12px;align-items:center">
+        <select id="ppf-type">
+          <option value="ppf">PPF</option>
+          <option value="epf">EPF</option>
+          <option value="nps">NPS</option>
+          <option value="other">Other</option>
+        </select>
+        <input id="ppf-name" placeholder="Account / description">
+        <input id="ppf-balance" type="number" placeholder="Current balance ₹" min="0">
+        <input id="ppf-yearly" type="number" placeholder="Yearly contribution ₹" min="0">
+        <button class="btn-sage" onclick="addPpf()">+ Add</button>
+      </div>
+      <div class="err" id="ppf-err"></div>
+    </div>
+  </div>
+
+  <!-- NET WORTH -->
+  <div class="page" id="pg-networth">
+    <div class="pg-title">Net worth</div>
+    <div class="pg-sub">Total assets minus liabilities — your true financial picture.</div>
+
+    <!-- Hero number -->
+    <div class="card" style="background:var(--ink);color:#fff;margin-bottom:14px">
+      <div style="font-size:12px;font-family:var(--mono);color:rgba(255,255,255,0.45);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Total net worth</div>
+      <div style="font-size:36px;font-weight:700;font-family:var(--mono);letter-spacing:-1px" id="nw-hero">₹0</div>
+      <div style="font-size:12px;font-family:var(--mono);color:rgba(255,255,255,0.4);margin-top:4px" id="nw-sub">Assets − Liabilities</div>
+    </div>
+
+    <div class="g2">
+      <!-- Assets -->
+      <div class="card">
+        <div class="card-title" style="color:var(--sage)">Assets</div>
+        <div id="nw-assets"></div>
+        <div style="border-top:2px solid var(--cream3);padding-top:10px;margin-top:8px;display:flex;justify-content:space-between;font-weight:700;font-size:14px">
+          <span style="color:var(--ink3)">Total assets</span>
+          <span style="color:var(--sage);font-family:var(--mono)" id="nw-total-assets">₹0</span>
+        </div>
+      </div>
+
+      <!-- Liabilities -->
+      <div class="card">
+        <div class="card-title" style="color:var(--rust)">Liabilities</div>
+        <div id="nw-liabilities"></div>
+        <div style="border-top:2px solid var(--cream3);padding-top:10px;margin-top:8px;display:flex;justify-content:space-between;font-weight:700;font-size:14px">
+          <span style="color:var(--ink3)">Total liabilities</span>
+          <span style="color:var(--rust);font-family:var(--mono)" id="nw-total-liab">₹0</span>
+        </div>
+        <!-- Add liability -->
+        <div style="margin-top:14px;display:grid;grid-template-columns:130px 1fr 110px auto;gap:8px;align-items:center">
+          <select id="liab-type">
+            <option value="homeloan">Home loan</option>
+            <option value="carloan">Car loan</option>
+            <option value="personal">Personal loan</option>
+            <option value="relative">Due to relatives</option>
+            <option value="other">Other</option>
+          </select>
+          <input id="liab-name" placeholder="Description">
+          <input id="liab-amt" type="number" placeholder="Amount ₹" min="0">
+          <button class="btn-out" style="border-color:var(--rust);color:var(--rust)" onclick="addLiability()">+ Add</button>
+        </div>
+        <div class="err" id="liab-err"></div>
+      </div>
+    </div>
+
+    <!-- Breakdown chart -->
+    <div class="card mt1">
+      <div class="card-title">Asset breakdown</div>
+      <div style="position:relative;height:220px"><canvas id="nw-donut"></canvas></div>
+      <div id="nw-legend" style="margin-top:12px;display:flex;flex-direction:column;gap:5px"></div>
     </div>
   </div>
 
@@ -1222,6 +1335,7 @@ select option{background:#fff}
     <div class="mob-more-item" onclick="mobNav('received','');closeMobMore()"><span class="mob-more-ic">↙</span><div><div class="mob-more-txt">Received payments</div></div></div>
     <div class="mob-more-item" onclick="mobNav('fixed','');closeMobMore()"><span class="mob-more-ic">◉</span><div><div class="mob-more-txt">Fixed expenses</div></div></div>
     <div class="mob-more-item" onclick="mobNav('goals','');closeMobMore()"><span class="mob-more-ic">◎</span><div><div class="mob-more-txt">Goals & investments</div></div></div>
+    <div class="mob-more-item" onclick="mobNav('networth','');closeMobMore()"><span class="mob-more-ic">◑</span><div><div class="mob-more-txt">Net worth</div></div></div>
     <div class="mob-more-item" onclick="mobNav('categories','');closeMobMore()"><span class="mob-more-ic">◈</span><div><div class="mob-more-txt">Categories</div></div></div>
     <div class="mob-more-item" onclick="mobNav('backup','');closeMobMore()"><span class="mob-more-ic">⬡</span><div><div class="mob-more-txt">Data & backup</div></div></div>
     <div style="padding:14px 4px 0">
@@ -1295,6 +1409,11 @@ let S={
   logFilter:'All',
   selColor:PALETTE[0],
   calOff:0,
+  // New wealth instruments
+  ulips:[],   // {id,name,insurer,premium,frequency,fundValue,maturity,startDate}
+  sgbs:[],    // {id,name,series,units,issuePrice,currentPrice,maturity}
+  ppfEpf:[],  // {id,name,type,balance,yearlyContribution}
+  liabilities:[], // {id,name,type,amount} e.g. home loan, car loan
 };
 let CH={};
 
@@ -1476,7 +1595,8 @@ function nav(id,el){
   if(el)el.classList.add('on');
   const map={dashboard:renderDashboard,calendar:renderCalendar,trends:renderTrends,log:renderLog,
     income:renderIncome,received:renderReceived,fixed:renderFixed,cards:renderCards,
-    goals:renderGoals,portfolio:renderPortfolio,categories:renderCats,backup:renderBackup};
+    goals:renderGoals,portfolio:renderPortfolio,categories:renderCats,backup:renderBackup,
+    networth:renderNetWorth};
   if(map[id])map[id]();
 }
 
@@ -1771,10 +1891,16 @@ function renderPortfolioList(){
         const typeBadge={stock:'#2c4a7c',mf:'#3d6b55',etf:'#7c3d6b'}[h.type]||'#8a8278';
         return`<div class="port-row" style="grid-template-columns:1fr 80px 60px 100px 120px 110px 100px 28px">
           <div>
-            <div style="font-size:13px;font-weight:500">${h.name}</div>
-            <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+            <div style="font-size:13px;font-weight:600">${h.name}</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
               <span style="font-size:10px;font-family:var(--mono);background:${rgba(typeBadge,0.12)};color:${typeBadge};padding:1px 7px;border-radius:20px">${h.type.toUpperCase()}</span>
               <span style="font-size:11px;font-family:var(--mono);color:var(--ink3)">${h.symbol}${h.lastUpdated?` · ↻ ${h.lastUpdated}`:''}</span>
+            </div>
+            <!-- Mobile inline value + gain (hidden on desktop via CSS) -->
+            <div class="port-mob-inline" style="display:none;margin-top:6px;display:flex;gap:12px;align-items:center">
+              <span style="font-family:var(--mono);font-weight:700;font-size:14px">${fmtP(curVal)}</span>
+              <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:${gainCol}">${gain>=0?'+':''}${gainPct}%</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--ink3)">${profName(h.profileId)}</span>
             </div>
           </div>
           <span style="font-size:12px;font-family:var(--mono);color:var(--ink3)">${profName(h.profileId)}</span>
@@ -2064,6 +2190,26 @@ function renderDashboard(){
   const ft=totFix(),iv=totInv(),corp=totCorpus();
   const total=vt+ft,inc=totInc()+meReceived().reduce((s,r)=>s+r.amt,0),sav=inc-total-iv;
   const td=today(),tdAmt=S.entries.filter(e=>e.date===td).reduce((s,e)=>s+e.amt,0);
+
+  // Mobile hero net worth card
+  const isMob=window.innerWidth<=768;
+  const mobHero=document.getElementById('mob-nw-hero');
+  if(mobHero){
+    mobHero.style.display=isMob?'block':'none';
+    if(isMob){
+      const{net}=totNetWorth();
+      const nwEl=document.getElementById('mob-nw-val');
+      if(nwEl){nwEl.textContent=fmt(net);nwEl.style.color=net>=0?'#fff':'#ff8c6a';}
+      const incEl=document.getElementById('mob-inc-val');
+      if(incEl)incEl.textContent=fmt(inc);
+      const spEl=document.getElementById('mob-spent-val');
+      if(spEl)spEl.textContent=fmt(total);
+      const savEl=document.getElementById('mob-saved-val');
+      if(savEl){savEl.textContent=fmt(Math.abs(sav));savEl.style.color=sav>=0?'#6ee7b7':'#ff8c6a';}
+    }
+  }
+
+  // Desktop stat grid (hidden on mobile via CSS)
   document.getElementById('stats').innerHTML=`
     <div class="stat"><div class="stat-bar" style="background:#c4522a"></div><div class="stat-lbl">Today's spend</div><div class="stat-val" style="color:#c4522a">${fmt(tdAmt)}</div><div class="stat-sub">${S.entries.filter(e=>e.date===td).length} transactions</div></div>
     <div class="stat"><div class="stat-bar" style="background:#b8860b"></div><div class="stat-lbl">Month variable</div><div class="stat-val" style="color:#b8860b">${fmt(vt)}</div><div class="stat-sub">${me.length} entries</div></div>
@@ -2278,6 +2424,7 @@ function renderGoals(){
       <div style="margin-top:10px;display:flex;align-items:center;gap:8px"><span style="font-size:12px;color:var(--ink3);font-family:var(--mono);white-space:nowrap">Update saved:</span><input type="number" value="${g.saved}" min="0" style="max-width:140px" oninput="liveGoalSaved(${g.id},this)"></div>
     </div>`;
   }).join('');
+  renderWealthInstruments();
 }
 
 /* CATEGORIES */
@@ -2454,10 +2601,251 @@ function resetAllData(){
   setTimeout(()=>location.reload(),1200);
 }
 
+/* ══ ULIP ══ */
+function addUlip(){
+  const name=document.getElementById('ulip-name').value.trim();
+  const insurer=document.getElementById('ulip-insurer').value.trim();
+  const fundValue=parseFloat(document.getElementById('ulip-fundval').value)||0;
+  const premium=parseFloat(document.getElementById('ulip-premium').value)||0;
+  const err=document.getElementById('ulip-err');
+  if(!name){err.textContent='Enter plan name.';return;}
+  err.textContent='';
+  if(!S.ulips)S.ulips=[];
+  S.ulips.push({id:Date.now(),name,insurer,fundValue,premium});
+  ['ulip-name','ulip-insurer','ulip-fundval','ulip-premium'].forEach(id=>document.getElementById(id).value='');
+  save();renderGoals();renderNetWorth();
+}
+function delUlip(id){S.ulips=S.ulips.filter(u=>u.id!==id);save();renderGoals();renderNetWorth();}
+function liveUlipVal(id,el){const u=(S.ulips||[]).find(u=>u.id===id);if(u){u.fundValue=parseFloat(el.value)||0;save();renderNetWorth();}}
+
+/* ══ SGB ══ */
+function updateSgbGoldPrice(val){S.sgbGoldPrice=parseFloat(val)||9200;save();renderGoals();renderNetWorth();}
+function addSgb(){
+  const name=document.getElementById('sgb-name').value.trim();
+  const units=parseFloat(document.getElementById('sgb-units').value)||0;
+  const issuePrice=parseFloat(document.getElementById('sgb-issue').value)||0;
+  const maturity=document.getElementById('sgb-maturity').value.trim();
+  const err=document.getElementById('sgb-err');
+  if(!name||units<=0){err.textContent='Enter series name and units.';return;}
+  err.textContent='';
+  if(!S.sgbs)S.sgbs=[];
+  S.sgbs.push({id:Date.now(),name,units,issuePrice,maturity});
+  ['sgb-name','sgb-units','sgb-issue','sgb-maturity'].forEach(id=>document.getElementById(id).value='');
+  save();renderGoals();renderNetWorth();
+}
+function delSgb(id){S.sgbs=S.sgbs.filter(s=>s.id!==id);save();renderGoals();renderNetWorth();}
+
+/* ══ PPF/EPF ══ */
+function addPpf(){
+  const type=document.getElementById('ppf-type').value;
+  const name=document.getElementById('ppf-name').value.trim();
+  const balance=parseFloat(document.getElementById('ppf-balance').value)||0;
+  const yearly=parseFloat(document.getElementById('ppf-yearly').value)||0;
+  const err=document.getElementById('ppf-err');
+  if(!name){err.textContent='Enter account description.';return;}
+  err.textContent='';
+  if(!S.ppfEpf)S.ppfEpf=[];
+  S.ppfEpf.push({id:Date.now(),type,name,balance,yearly});
+  ['ppf-name','ppf-balance','ppf-yearly'].forEach(id=>document.getElementById(id).value='');
+  save();renderGoals();renderNetWorth();
+}
+function delPpf(id){S.ppfEpf=S.ppfEpf.filter(p=>p.id!==id);save();renderGoals();renderNetWorth();}
+function livePpfBal(id,el){const p=(S.ppfEpf||[]).find(p=>p.id===id);if(p){p.balance=parseFloat(el.value)||0;save();renderNetWorth();}}
+
+/* ══ LIABILITIES ══ */
+function addLiability(){
+  const type=document.getElementById('liab-type').value;
+  const name=document.getElementById('liab-name').value.trim();
+  const amount=parseFloat(document.getElementById('liab-amt').value)||0;
+  const err=document.getElementById('liab-err');
+  if(!name||amount<=0){err.textContent='Enter description and amount.';return;}
+  err.textContent='';
+  if(!S.liabilities)S.liabilities=[];
+  S.liabilities.push({id:Date.now(),type,name,amount});
+  ['liab-name','liab-amt'].forEach(id=>document.getElementById(id).value='');
+  save();renderNetWorth();
+}
+function delLiability(id){S.liabilities=S.liabilities.filter(l=>l.id!==id);save();renderNetWorth();}
+function liveLiabAmt(id,el){const l=(S.liabilities||[]).find(l=>l.id===id);if(l){l.amount=parseFloat(el.value)||0;save();renderNetWorth();}}
+
+/* ══ NET WORTH TOTALS ══ */
+function totNetWorth(){
+  const goldPrice=S.sgbGoldPrice||9200;
+  const assets=
+    totCorpus()+
+    totPortfolio()+
+    ((S.ulips||[]).reduce((s,u)=>s+u.fundValue,0))+
+    ((S.sgbs||[]).reduce((s,g)=>s+(g.units*goldPrice),0))+
+    ((S.ppfEpf||[]).reduce((s,p)=>s+p.balance,0));
+  const liab=(S.liabilities||[]).reduce((s,l)=>s+l.amount,0);
+  return{assets,liab,net:assets-liab};
+}
+function totPortfolio(){return S.holdings.reduce((s,h)=>s+(h.currentPrice*h.qty),0);}
+
+/* ══ RENDER NET WORTH ══ */
+function renderNetWorth(){
+  const goldPrice=S.sgbGoldPrice||9200;
+  const {assets,liab,net}=totNetWorth();
+
+  // Hero
+  const hero=document.getElementById('nw-hero');
+  const sub=document.getElementById('nw-sub');
+  if(hero){hero.textContent=fmt(net);hero.style.color=net>=0?'#fff':'#ff8c6a';}
+  if(sub)sub.textContent=`${fmt(assets)} assets − ${fmt(liab)} liabilities`;
+
+  // Assets breakdown
+  const portVal=totPortfolio();
+  const corpVal=totCorpus();
+  const ulipVal=(S.ulips||[]).reduce((s,u)=>s+u.fundValue,0);
+  const sgbVal=(S.sgbs||[]).reduce((s,g)=>s+(g.units*goldPrice),0);
+  const ppfVal=(S.ppfEpf||[]).reduce((s,p)=>s+p.balance,0);
+
+  const assetRows=[
+    {label:'Savings corpus (FD/RD/Gold)',val:corpVal,col:'#3d6b55'},
+    {label:'Portfolio (Stocks/MF/ETF)',val:portVal,col:'#2c4a7c'},
+    {label:'ULIP plans',val:ulipVal,col:'#7c3d6b'},
+    {label:'SGB (Sovereign Gold Bonds)',val:sgbVal,col:'#b8860b'},
+    {label:'PPF / EPF / NPS',val:ppfVal,col:'#4b3fa0'},
+  ].filter(r=>r.val>0);
+
+  const assetsEl=document.getElementById('nw-assets');
+  const totAssetsEl=document.getElementById('nw-total-assets');
+  if(assetsEl) assetsEl.innerHTML=assetRows.map(r=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--cream2)">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:8px;height:8px;border-radius:2px;background:${r.col};flex-shrink:0"></span>
+        <span style="font-size:13px;color:var(--ink2)">${r.label}</span>
+      </div>
+      <span style="font-family:var(--mono);font-weight:700;font-size:13px;color:${r.col}">${fmt(r.val)}</span>
+    </div>`).join('')+(!assetRows.length?`<div class="empty"><span class="empty-icon">◎</span>Add assets above to track them here</div>`:'');
+  if(totAssetsEl)totAssetsEl.textContent=fmt(assets);
+
+  // Liabilities
+  const liabEl=document.getElementById('nw-liabilities');
+  const totLiabEl=document.getElementById('nw-total-liab');
+  const liabs=S.liabilities||[];
+  if(liabEl) liabEl.innerHTML=!liabs.length?`<div style="font-size:13px;color:var(--ink4);padding:8px 0">No liabilities added</div>`:liabs.map(l=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--cream2)">
+      <div>
+        <div style="font-size:13px">${l.name}</div>
+        <div style="font-size:11px;font-family:var(--mono);color:var(--ink3)">${l.type}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="number" value="${l.amount}" min="0" style="width:110px;text-align:right;font-family:var(--mono);font-weight:700;color:var(--rust);background:transparent;border:none;border-bottom:1.5px solid var(--cream3);border-radius:0;font-size:13px;padding:2px 4px;outline:none" oninput="liveLiabAmt(${l.id},this)">
+        <button class="xi" onclick="delLiability(${l.id})">✕</button>
+      </div>
+    </div>`).join('');
+  if(totLiabEl)totLiabEl.textContent=fmt(liab);
+
+  // Donut chart
+  if(assetRows.length){
+    if(CH.nwdnt)CH.nwdnt.destroy();
+    CH.nwdnt=new Chart(document.getElementById('nw-donut'),{
+      type:'doughnut',
+      data:{labels:assetRows.map(r=>r.label),datasets:[{data:assetRows.map(r=>r.val),backgroundColor:assetRows.map(r=>r.col),borderWidth:0,hoverOffset:6}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${fmt(ctx.raw)}`}}}}
+    });
+    const legEl=document.getElementById('nw-legend');
+    if(legEl)legEl.innerHTML=assetRows.map(r=>{
+      const pct=assets>0?Math.round(r.val/assets*100):0;
+      return`<div style="display:flex;align-items:center;gap:7px;font-size:12px">
+        <span style="width:9px;height:9px;border-radius:2px;background:${r.col};flex-shrink:0"></span>
+        <span style="flex:1;color:var(--ink2)">${r.label}</span>
+        <span style="font-family:var(--mono);font-weight:700">${fmt(r.val)} <span style="color:var(--ink4)">(${pct}%)</span></span>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* Render ULIP/SGB/PPF in Goals page */
+function renderWealthInstruments(){
+  const goldPrice=S.sgbGoldPrice||9200;
+  // Gold price input sync
+  const gpi=document.getElementById('sgb-gold-price');
+  if(gpi)gpi.value=goldPrice;
+
+  // ULIP
+  const ul=document.getElementById('ulip-list');
+  if(ul){
+    const ulips=S.ulips||[];
+    ul.innerHTML=!ulips.length?`<div style="font-size:13px;color:var(--ink4);padding:4px 0 8px">No ULIP plans added</div>`:
+      ulips.map(u=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--cream2)">
+        <div><div style="font-size:13px;font-weight:500">${u.name}</div><div style="font-size:11px;font-family:var(--mono);color:var(--ink3)">${u.insurer||'—'} · Annual premium: ${fmt(u.premium)}</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" value="${u.fundValue}" min="0" step="1" style="width:120px;text-align:right;font-family:var(--mono);font-weight:700;color:#7c3d6b;background:transparent;border:none;border-bottom:1.5px solid var(--cream3);border-radius:0;font-size:13px;padding:2px 4px;outline:none" oninput="liveUlipVal(${u.id},this)" placeholder="Fund value">
+          <button class="xi" onclick="delUlip(${u.id})">✕</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // SGB
+  const sl=document.getElementById('sgb-list');
+  if(sl){
+    const sgbs=S.sgbs||[];
+    sl.innerHTML=!sgbs.length?`<div style="font-size:13px;color:var(--ink4);padding:4px 0 8px">No SGBs added</div>`:
+      sgbs.map(g=>{const cv=g.units*goldPrice;const cost=g.units*g.issuePrice;const gain=cv-cost;return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--cream2)">
+        <div><div style="font-size:13px;font-weight:500">${g.name}</div><div style="font-size:11px;font-family:var(--mono);color:var(--ink3)">${g.units} units · Issue: ${fmt(g.issuePrice)} · Maturity: ${g.maturity||'—'}</div></div>
+        <div style="text-align:right">
+          <div style="font-family:var(--mono);font-weight:700;font-size:13px;color:#b8860b">${fmt(cv)}</div>
+          <div style="font-size:10px;font-family:var(--mono);color:${gain>=0?'#3d6b55':'#c4522a'}">${gain>=0?'+':''}${fmt(gain)}</div>
+        </div>
+        <button class="xi" onclick="delSgb(${g.id})" style="margin-left:8px">✕</button>
+      </div>`;}).join('');
+  }
+
+  // PPF/EPF
+  const pl=document.getElementById('ppf-list');
+  if(pl){
+    const ppfs=S.ppfEpf||[];
+    pl.innerHTML=!ppfs.length?`<div style="font-size:13px;color:var(--ink4);padding:4px 0 8px">No PPF/EPF/NPS accounts added</div>`:
+      ppfs.map(p=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--cream2)">
+        <div><div style="font-size:13px;font-weight:500">${p.name}</div><div style="font-size:11px;font-family:var(--mono);color:var(--ink3)">${p.type.toUpperCase()} · Yearly: ${fmt(p.yearly)}</div></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" value="${p.balance}" min="0" style="width:120px;text-align:right;font-family:var(--mono);font-weight:700;color:#4b3fa0;background:transparent;border:none;border-bottom:1.5px solid var(--cream3);border-radius:0;font-size:13px;padding:2px 4px;outline:none" oninput="livePpfBal(${p.id},this)">
+          <button class="xi" onclick="delPpf(${p.id})">✕</button>
+        </div>
+      </div>`).join('');
+  }
+}
+
 /* ══ MOBILE NAV & UI ══ */
 
 const MOB_NAV_IDS=['mni-dashboard','mni-log','mni-cards','mni-portfolio'];
-const MOB_PAGE_NAMES={dashboard:'Home',log:'Expenses',cards:'Cards',portfolio:'Portfolio',calendar:'Calendar',trends:'Trends',income:'Income',received:'Received',fixed:'Fixed',goals:'Goals',categories:'Categories',backup:'Backup'};
+const MOB_PAGE_NAMES={dashboard:'Home',log:'Expenses',cards:'Cards',portfolio:'Portfolio',calendar:'Calendar',trends:'Trends',income:'Income',received:'Received',fixed:'Fixed',goals:'Goals',categories:'Categories',backup:'Backup',networth:'Net worth'};
+
+// FAB config per page: null = hidden
+const MOB_FAB_CONFIG={
+  dashboard:{icon:'+',action:'openMobQuickAdd()',title:'Add expense'},
+  log:{icon:'+',action:'openMobQuickAdd()',title:'Add expense'},
+  cards:{icon:'▭',action:'mobFabCardAction()',title:'Add card / transaction'},
+  portfolio:null,
+  calendar:null,
+  trends:null,
+  income:null,
+  received:null,
+  fixed:null,
+  goals:null,
+  categories:null,
+  backup:null,
+  networth:null,
+};
+
+function mobFabCardAction(){
+  // If a card is selected, add transaction; otherwise add card
+  if(S.selectedCard){openModal('modal-add-cctx');document.getElementById('cctx-date').value=today();}
+  else{openAddCard();}
+}
+
+function updateMobFab(pageId){
+  const fab=document.getElementById('mob-fab');
+  if(!fab)return;
+  const cfg=MOB_FAB_CONFIG[pageId];
+  if(!cfg){fab.style.display='none';return;}
+  fab.style.display='flex';
+  fab.textContent=cfg.icon;
+  fab.title=cfg.title;
+  fab.onclick=new Function(cfg.action);
+}
 
 function mobNav(pageId, btnId){
   const fakeEl=document.querySelector(`.ni[onclick*="'${pageId}'"]`);
@@ -2466,9 +2854,9 @@ function mobNav(pageId, btnId){
     const el=document.getElementById(id);
     if(el)el.classList.toggle('on', id===btnId);
   });
-  // Update mobile header
   const hdr=document.getElementById('mob-header-page');
   if(hdr)hdr.textContent=MOB_PAGE_NAMES[pageId]||pageId;
+  updateMobFab(pageId);
   window.scrollTo(0,0);
 }
 
