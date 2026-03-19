@@ -231,92 +231,148 @@ select option{background:#fff}
 @media(max-width:768px){
   /* ── Core layout ── */
   .sb{display:none!important}
-  body{display:block;overflow-y:auto;overflow-x:hidden;height:100vh;-webkit-overflow-scrolling:touch}
-  .main{padding:0 0 5rem;height:auto;overflow:visible;min-height:100vh}
+  body{
+    display:block;overflow-y:auto;overflow-x:hidden;
+    height:100vh;-webkit-overflow-scrolling:touch;
+    font-family:'Plus Jakarta Sans',sans-serif;
+  }
+  .main{padding:0 0 5.5rem;height:auto;overflow:visible;min-height:100vh}
 
-  /* ── Mobile header bar ── */
+  /* ── Mobile sticky header — respects iPhone notch ── */
   .mob-header{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0.9rem 1.1rem 0.7rem;
-    background:#fff;
+    display:flex!important;align-items:center;justify-content:space-between;
+    padding:calc(env(safe-area-inset-top) + 10px) 1rem 10px;
+    background:var(--cream);
     border-bottom:1px solid var(--cream3);
     position:sticky;top:0;z-index:100;
   }
-  .mob-header-title{font-family:var(--serif);font-size:17px;font-style:italic;color:var(--ink);font-weight:700}
-  .mob-header-right{font-size:12px;font-family:var(--mono);color:var(--ink3)}
+  .mob-header-title{
+    font-size:16px;font-weight:700;color:var(--ink);
+    display:flex;align-items:center;gap:6px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    letter-spacing:-0.2px;
+  }
+  .mob-header-right{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--ink3)}
 
   /* ── Page content padding ── */
-  .page{padding:0.9rem 1rem}
+  .page{padding:0.85rem 0.9rem 0.5rem}
 
-  /* ── Page title ── */
-  .pg-title{font-size:20px;margin-bottom:0.1rem}
-  .pg-sub{display:none}
+  /* ── Page title — compact ── */
+  .pg-title{font-size:18px!important;margin-bottom:0.75rem!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-style:normal!important;font-weight:700!important}
+  .pg-sub{display:none!important}
 
   /* ── Stat grid — 2x2 + 1 full width ── */
   .stat-grid{
     display:grid!important;
     grid-template-columns:1fr 1fr!important;
-    gap:8px!important;
-    margin-bottom:1rem!important;
+    gap:7px!important;
+    margin-bottom:0.85rem!important;
   }
-  /* 5th stat card spans full width */
   .stat-grid .stat:nth-child(5){grid-column:span 2}
-  .stat{padding:0.85rem 1rem!important;border-radius:14px!important}
-  .stat-lbl{font-size:9px!important;margin-bottom:5px!important}
-  .stat-val{font-size:17px!important;letter-spacing:-0.3px!important}
-  .stat-sub{font-size:9px!important}
+  .stat{padding:0.8rem 0.9rem!important;border-radius:12px!important}
+  .stat-lbl{font-size:9px!important;margin-bottom:4px!important;letter-spacing:0.04em!important}
+  .stat-val{font-size:16px!important;letter-spacing:-0.3px!important}
+  .stat-sub{font-size:9px!important;margin-top:2px!important}
 
   /* ── Cards ── */
-  .card{padding:1rem!important;border-radius:14px!important;margin-bottom:10px}
-  .card+.card{margin-top:0}
-  .card-title{font-size:10px!important;margin-bottom:0.9rem!important}
+  .card{padding:0.9rem!important;border-radius:14px!important;margin-bottom:8px!important}
+  .card+.card,.card+.mt1,.mt1{margin-top:8px!important}
+  .card-title{font-size:9px!important;margin-bottom:0.75rem!important;letter-spacing:0.08em!important}
 
-  /* ── Hide desktop "Add expense" card on dashboard (FAB handles it on mobile) ── */
+  /* ── Hide desktop "Add expense" card on dashboard (FAB handles it) ── */
   #pg-dashboard .card:has(#e-date){display:none!important}
 
   /* ── Grids collapse ── */
   .g2,.g3{display:flex!important;flex-direction:column!important;gap:0!important}
 
-  /* ── Recent expenses list ── */
-  #dash-recent>div{padding:10px 0!important}
+  /* ── Dashboard recent expenses — compact rows ── */
+  #dash-recent>div{padding:9px 0!important;font-size:13px!important}
 
-  /* ── Expense log table ── */
+  /* ── EXPENSE LOG — compact single row layout ── */
   .t-head{display:none!important}
-  .erow{
-    display:flex!important;
-    flex-direction:column!important;
-    gap:4px!important;
-    padding:12px 0!important;
+  .erow.log-cols{
+    display:grid!important;
+    grid-template-columns:38px 1fr auto 28px!important;
+    gap:0 8px!important;
+    padding:10px 0!important;
+    align-items:center!important;
     border-bottom:1px solid var(--cream2)!important;
   }
-  .erow .e-date{font-size:11px!important;color:var(--ink4)!important}
-  .erow .e-amt{text-align:left!important;font-size:15px!important}
-  /* hide last delete button column header */
-  .log-cols span:last-child{display:none}
+  .erow.log-cols .e-date{font-size:11px!important;color:var(--ink4)!important;font-family:'JetBrains Mono',monospace!important}
+  .erow.log-cols .e-amt{font-size:13px!important;font-weight:700!important;text-align:right!important;color:var(--rust)!important}
+  /* Hide category tag on log to save space */
+  .erow.log-cols span:nth-child(3){display:none!important}
 
-  /* ── Received payments ── */
+  /* ── Received payments — compact ── */
   .recv-head{display:none!important}
-  .recv-row{display:flex!important;flex-direction:column!important;gap:3px!important;padding:11px 0!important}
+  .recv-row{
+    display:grid!important;
+    grid-template-columns:38px 1fr auto 28px!important;
+    gap:0 8px!important;
+    padding:10px 0!important;
+    align-items:center!important;
+  }
+  .recv-row span:nth-child(3){display:none!important}
 
-  /* ── Credit card transactions ── */
+  /* ── CREDIT CARDS — mini cards above transactions ── */
+  #cards-grid{margin-bottom:0!important}
+  #cards-grid .g3{
+    display:flex!important;overflow-x:auto!important;
+    gap:10px!important;padding:0 0 10px!important;
+    scroll-snap-type:x mandatory!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+  }
+  #cards-grid .g3::-webkit-scrollbar{display:none!important}
+  #cards-grid .g3>div{
+    min-width:72vw!important;max-width:72vw!important;
+    scroll-snap-align:start!important;flex-shrink:0!important;
+  }
+  .cc-visual{padding:1rem 1.1rem!important;border-radius:14px!important;margin-bottom:0!important}
+  .cc-bank{margin-bottom:10px!important;font-size:10px!important}
+  .cc-number{font-size:13px!important;letter-spacing:0.15em!important;margin-bottom:12px!important}
+  .cc-limit-val{font-size:13px!important}
+  /* Transactions appear directly below — no extra card padding */
+  #cc-tx-section{margin-top:8px!important}
   .cc-tx-head{display:none!important}
-  .cc-tx-row{display:flex!important;flex-wrap:wrap!important;gap:4px 10px!important;padding:11px 0!important;align-items:center!important}
-  .cc-tx-row>span:nth-child(5){display:none!important}
+  .cc-tx-row{
+    display:grid!important;
+    grid-template-columns:38px 1fr auto 28px!important;
+    gap:0 8px!important;
+    padding:10px 0!important;
+    align-items:center!important;
+    flex-wrap:unset!important;
+  }
+  .cc-tx-row>span:nth-child(3),.cc-tx-row>span:nth-child(5){display:none!important}
+  .cc-tx-row>span:nth-child(4){font-size:13px!important;font-weight:700!important;text-align:right!important}
 
-  /* ── Portfolio ── */
+  /* ── PORTFOLIO — compact single row per holding ── */
   .port-head{display:none!important}
   .port-row{
-    display:flex!important;flex-direction:column!important;
-    gap:6px!important;padding:14px 0!important;
+    display:grid!important;
+    grid-template-columns:1fr auto auto 28px!important;
+    gap:0 10px!important;
+    padding:11px 0!important;
+    align-items:center!important;
     border-bottom:1px solid var(--cream2)!important;
   }
+  /* Hide profile, qty, buy price columns — show only name, value, gain */
   .port-row>span:nth-child(2),
   .port-row>span:nth-child(3),
   .port-row>span:nth-child(4){display:none!important}
+  /* Current price input — compact */
+  .port-row>div:nth-child(5){display:none!important}
+  .port-row>span:nth-child(6){font-size:13px!important;font-weight:700!important;text-align:right!important;white-space:nowrap!important}
+  .port-row>div:nth-child(7) div:first-child{font-size:12px!important;font-weight:700!important}
+  .port-row>div:nth-child(7) div:last-child{font-size:10px!important}
+  /* Portfolio summary cards — 2 per row */
+  #pg-portfolio>.card:first-of-type{padding:0.9rem!important}
+  .port-refresh{display:none!important}
 
   /* ── Fixed expense rows ── */
   .frow{grid-template-columns:1fr 90px 28px!important}
   .frow .fc{display:none!important}
+  .fn,.fa{font-size:14px!important}
 
   /* ── Income rows ── */
   .irow{grid-template-columns:1fr 110px 28px!important}
@@ -325,42 +381,43 @@ select option{background:#fff}
   .modal{
     width:100%!important;max-width:100%!important;
     border-radius:24px 24px 0 0!important;
-    padding:1.5rem 1.25rem calc(1.75rem + env(safe-area-inset-bottom))!important;
+    padding:1.25rem 1.1rem calc(1.5rem + env(safe-area-inset-bottom))!important;
     position:fixed!important;bottom:0!important;left:0!important;right:0!important;
     animation:slideUp 0.28s cubic-bezier(0.32,0.72,0,1)!important;
   }
   .modal-bg.on{align-items:flex-end!important}
   .modal-row.r2,.modal-row.r3{grid-template-columns:1fr!important}
+  .modal-title{font-size:18px!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-style:normal!important}
 
   /* ── Forms — prevent iOS zoom (must be 16px+) ── */
-  input,select,textarea{font-size:16px!important;padding:12px 14px!important}
-  .btn,.btn-sage,.btn-blue{padding:13px 20px!important;font-size:15px!important;border-radius:12px!important}
-  .btn-out{padding:10px 16px!important;font-size:13px!important}
+  input,select,textarea{font-size:16px!important;padding:11px 13px!important;border-radius:10px!important}
+  .btn,.btn-sage,.btn-blue{padding:12px 18px!important;font-size:14px!important;border-radius:12px!important}
+  .btn-out{padding:9px 14px!important;font-size:12px!important}
 
   /* ── Toast above nav ── */
-  .toast{bottom:5rem!important;left:1rem!important;right:1rem!important;text-align:center!important;font-size:13px!important}
-
-  /* ── Credit card horizontal scroll ── */
-  #cards-grid .g3{
-    display:flex!important;overflow-x:auto!important;
-    gap:12px!important;padding-bottom:8px!important;
-    scroll-snap-type:x mandatory!important;
-    -webkit-overflow-scrolling:touch!important;
-  }
-  #cards-grid .g3>div{min-width:82vw!important;scroll-snap-align:start!important;flex-shrink:0!important}
+  .toast{bottom:5rem!important;left:0.75rem!important;right:0.75rem!important;text-align:center!important;font-size:13px!important}
 
   /* ── Calendar ── */
   .cday{font-size:12px!important;border-radius:8px!important}
 
   /* ── Filter pills horizontal scroll ── */
-  .filt{flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;padding-bottom:4px!important}
-  .filt::-webkit-scrollbar{display:none}
+  .filt,#log-pills{
+    display:flex!important;flex-wrap:nowrap!important;
+    overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;
+    padding-bottom:2px!important;gap:6px!important;
+  }
+  .filt::-webkit-scrollbar,#log-pills::-webkit-scrollbar{display:none!important}
+  .pill{white-space:nowrap!important;padding:5px 12px!important;font-size:11px!important}
 
-  /* ── Category chips wrap ── */
-  .chip-wrap{gap:6px!important}
+  /* ── Category chips ── */
+  .chip-wrap{gap:5px!important}
 
-  /* ── Backup page steps grid ── */
-  .card .g4-steps{display:flex!important;flex-direction:column!important;gap:8px!important}
+  /* ── Portfolio profile tabs scroll ── */
+  #port-profile-tabs{flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+  #port-profile-tabs::-webkit-scrollbar{display:none!important}
+  #port-type-tabs{flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+  #port-type-tabs::-webkit-scrollbar{display:none!important}
+  .cc-tab-btn{white-space:nowrap!important;font-size:11px!important;padding:5px 12px!important}
 }
 
 @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -373,34 +430,34 @@ select option{background:#fff}
   z-index:500;
   border-top:1px solid rgba(255,255,255,0.08);
   padding-bottom:env(safe-area-inset-bottom);
-  -webkit-backdrop-filter:blur(10px);
-  backdrop-filter:blur(10px);
 }
 .mob-bottom-nav{display:flex}
 @media(min-width:769px){.mob-bottom-nav{display:none!important}}
 .mob-nav-items{display:flex;width:100%;align-items:stretch}
 .mob-nav-item{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:4px;cursor:pointer;color:rgba(255,255,255,0.38);
-  transition:color 0.15s;padding:10px 4px 10px;
+  gap:3px;cursor:pointer;color:rgba(255,255,255,0.38);
+  transition:color 0.15s;padding:8px 4px 8px;
   border:none;background:none;-webkit-tap-highlight-color:transparent;
-  min-height:56px;
+  min-height:52px;
 }
 .mob-nav-item.on{color:#fff}
 .mob-nav-item.on .mob-nav-dot{opacity:1;transform:scale(1)}
-.mob-nav-icon{font-size:22px;line-height:1}
-.mob-nav-label{font-size:10px;font-family:var(--mono);letter-spacing:0.02em;font-weight:500}
+.mob-nav-icon{font-size:20px;line-height:1}
+.mob-nav-label{font-size:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;letter-spacing:0}
 .mob-nav-dot{
   width:4px;height:4px;border-radius:50%;
   background:var(--rust2);opacity:0;
-  transition:all 0.2s;transform:scale(0);
+  transition:all 0.2s;transform:scale(0);margin-top:1px;
 }
 
-/* ─ FAB ─ */
+/* ─ FAB — above nav bar with safe area ─ */
 .mob-fab{
   display:none;
-  position:fixed;bottom:74px;right:1.1rem;
-  width:54px;height:54px;border-radius:50%;
+  position:fixed;
+  bottom:calc(56px + env(safe-area-inset-bottom) + 12px);
+  right:1rem;
+  width:52px;height:52px;border-radius:50%;
   background:var(--rust);color:#fff;
   font-size:26px;font-weight:300;line-height:1;
   border:none;cursor:pointer;
@@ -419,12 +476,12 @@ select option{background:#fff}
 .mob-qa-bg{position:absolute;inset:0;background:rgba(26,23,20,0.55)}
 .mob-qa-sheet{
   position:relative;width:100%;
-  background:#fff;border-radius:24px 24px 0 0;
-  padding:1.25rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  background:var(--cream);border-radius:24px 24px 0 0;
+  padding:1rem 1rem calc(1.25rem + env(safe-area-inset-bottom));
   animation:slideUp 0.28s cubic-bezier(0.32,0.72,0,1);
 }
-.mob-qa-handle{width:40px;height:4px;background:var(--cream3);border-radius:2px;margin:0 auto 1.25rem}
-.mob-qa-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:1.1rem;color:var(--ink)}
+.mob-qa-handle{width:40px;height:4px;background:var(--cream3);border-radius:2px;margin:0 auto 1rem}
+.mob-qa-title{font-size:18px;font-weight:700;margin-bottom:1rem;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif}
 
 /* ─ MORE MENU SHEET ─ */
 .mob-more-menu{display:none;position:fixed;inset:0;z-index:600;align-items:flex-end}
@@ -433,26 +490,24 @@ select option{background:#fff}
 .mob-more-sheet{
   position:relative;width:100%;
   background:#fff;border-radius:24px 24px 0 0;
-  padding:1.25rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
+  padding:1rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
   animation:slideUp 0.28s cubic-bezier(0.32,0.72,0,1);
-  max-height:82vh;overflow-y:auto;
+  max-height:80vh;overflow-y:auto;
 }
 .mob-more-item{
-  display:flex;align-items:center;gap:14px;
-  padding:15px 8px;border-bottom:1px solid var(--cream2);
+  display:flex;align-items:center;gap:12px;
+  padding:13px 6px;border-bottom:1px solid var(--cream2);
   cursor:pointer;-webkit-tap-highlight-color:transparent;
-  border-radius:0;transition:background 0.1s;
 }
 .mob-more-item:last-child{border-bottom:none}
-.mob-more-item:active{background:var(--cream2);border-radius:12px;margin:0 -4px;padding-left:12px;padding-right:12px}
+.mob-more-item:active{background:var(--cream2);border-radius:10px;margin:0 -6px;padding-left:12px;padding-right:12px}
 .mob-more-ic{
-  font-size:18px;width:40px;height:40px;
-  border-radius:12px;background:var(--cream2);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
+  font-size:16px;width:36px;height:36px;border-radius:10px;
+  background:var(--cream2);display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;
 }
-.mob-more-txt{font-size:15px;font-weight:600;color:var(--ink)}
-.mob-more-sub{font-size:12px;color:var(--ink3);margin-top:1px}
+.mob-more-txt{font-size:14px;font-weight:600;color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif}
+.mob-more-sub{font-size:11px;color:var(--ink3);margin-top:1px}
 </style>
 </head>
 <body>
