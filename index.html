@@ -1122,20 +1122,44 @@ select option{background:#fff}
     </div>
 
     <div class="card mt1">
-      <div class="card-title">Anthropic API key <span style="color:var(--ink4);font-weight:400;text-transform:none;font-size:11px;letter-spacing:0">(required for credit card statement import)</span></div>
-      <p style="font-size:13px;color:var(--ink3);line-height:1.7;margin-bottom:1rem">
-        The statement parser uses Claude AI to read your PDF. Enter your Anthropic API key once — it is stored only in this browser and never sent anywhere except directly to Anthropic's servers.
-        Get a key at <strong style="color:var(--ink)">console.anthropic.com</strong>.
-      </p>
-      <div style="display:flex;gap:10px;align-items:center">
-        <div style="position:relative;flex:1">
-          <input type="password" id="api-key-input" placeholder="sk-ant-api03-…" style="padding-right:60px">
-          <button onclick="toggleApiKeyVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink3);font-size:12px;font-family:var(--mono)" id="api-key-vis-btn">show</button>
+      <div class="card-title">Statement import setup <span style="color:var(--ink4);font-weight:400;text-transform:none;font-size:11px;letter-spacing:0">(one-time, free)</span></div>
+
+      <!-- Step 1: Gemini Key -->
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:1.25rem">
+        <div style="width:24px;height:24px;border-radius:50%;background:var(--rust);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">1</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Get free Gemini API key</div>
+          <div style="font-size:12px;color:var(--ink3);margin-bottom:8px">Go to <strong style="color:var(--ink)">aistudio.google.com</strong> → Get API key → Create API key. Free, no credit card. Starts with <code style="background:var(--cream2);padding:1px 5px;border-radius:4px">AIzaSy…</code></div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="position:relative;flex:1">
+              <input type="password" id="api-key-input" placeholder="AIzaSy…" style="padding-right:55px">
+              <button onclick="toggleApiKeyVis()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--ink3);font-size:12px;font-family:var(--mono)" id="api-key-vis-btn">show</button>
+            </div>
+            <button class="btn-sage" onclick="saveApiKey()">Save</button>
+            <button class="btn-out" onclick="clearApiKey()" id="api-key-clear-btn" style="display:none">Clear</button>
+          </div>
+          <div id="api-key-status" style="font-size:12px;font-family:var(--mono);margin-top:6px;color:var(--ink4)"></div>
         </div>
-        <button class="btn-sage" onclick="saveApiKey()">Save key</button>
-        <button class="btn-out" onclick="clearApiKey()" id="api-key-clear-btn" style="display:none">Clear</button>
       </div>
-      <div id="api-key-status" style="font-size:12px;font-family:var(--mono);margin-top:8px;color:var(--ink4)"></div>
+
+      <!-- Step 2: Cloudflare Worker -->
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="width:24px;height:24px;border-radius:50%;background:var(--rust);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px">2</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;margin-bottom:4px">Deploy your Cloudflare Worker (free)</div>
+          <div style="font-size:12px;color:var(--ink3);margin-bottom:8px;line-height:1.7">
+            <strong style="color:var(--ink)">a)</strong> Go to <strong style="color:var(--ink)">workers.cloudflare.com</strong> → sign up free<br>
+            <strong style="color:var(--ink)">b)</strong> Click <strong style="color:var(--ink)">Create Worker</strong> → Edit code → paste the code from the <strong style="color:var(--rust)">gemini-worker.js</strong> file you downloaded alongside this tracker<br>
+            <strong style="color:var(--ink)">c)</strong> Click <strong style="color:var(--ink)">Deploy</strong> → copy the Worker URL (e.g. <code style="background:var(--cream2);padding:1px 5px;border-radius:4px;font-size:11px">https://paisa-proxy.yourname.workers.dev</code>)<br>
+            <strong style="color:var(--ink)">d)</strong> Paste it below
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input id="worker-url-input" placeholder="https://your-worker.workers.dev" style="flex:1">
+            <button class="btn-sage" onclick="saveWorkerUrl()">Save</button>
+          </div>
+          <div id="worker-url-status" style="font-size:12px;font-family:var(--mono);margin-top:6px;color:var(--ink4)"></div>
+        </div>
+      </div>
     </div>
 
     <div class="card mt1" style="border:1.5px solid var(--rust3)">
@@ -2110,37 +2134,48 @@ ${truncated}`;
   try{
     const apiKey=getApiKey();
     if(!apiKey){
-      toast('No API key saved. Go to Data & backup → enter your Anthropic API key first.',5000);
+      toast('No Gemini API key saved. Go to Data & backup → enter your key first.',5000);
       stmtBtn.textContent='📄 Import statement (PDF)';stmtBtn.disabled=false;
       return;
     }
-    const response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4096,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
 
-    if(!response.ok){
-      const e=await response.json();
-      throw new Error(e?.error?.message||`API error ${response.status}`);
+    const workerUrl=getWorkerUrl();
+    if(!workerUrl){
+      toast('No Worker URL saved. Go to Data & backup → enter your Cloudflare Worker URL.',5000);
+      stmtBtn.textContent='📄 Import statement (PDF)';stmtBtn.disabled=false;
+      return;
     }
 
-    const data=await response.json();
-    let raw=data.content.map(b=>b.text||'').join('').trim();
-    // Strip any markdown fences Claude might add
+    stmtBtn.textContent='⏳ Parsing with Gemini…';
+
+    // Call your own Cloudflare Worker — no CORS issues, always reliable
+    let response;
+    try{
+      response=await fetch(workerUrl,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({apiKey,prompt}),
+        signal:AbortSignal.timeout(45000)
+      });
+    }catch(e){
+      throw new Error('Could not reach your Worker. Check the URL in Data & backup. ('+(e.message||e)+')');
+    }
+
+    let data;
+    try{data=await response.json();}
+    catch(e){throw new Error('Worker returned invalid response.');}
+
+    if(!response.ok||data?.error){
+      const msg=data?.error?.message||data?.error||`HTTP ${response.status}`;
+      if(response.status===400||msg.includes('API_KEY'))throw new Error('Invalid Gemini API key. Check your key in Data & backup.');
+      if(response.status===429)throw new Error('Gemini free quota exceeded for today. Try again tomorrow.');
+      throw new Error('Gemini error: '+msg);
+    }
+
+    let raw=(data?.candidates?.[0]?.content?.parts?.[0]?.text||'').trim();
     raw=raw.replace(/^```[\w]*\n?/,'').replace(/\n?```$/,'').trim();
-    // Extract just the JSON array if there's surrounding text
     const match=raw.match(/\[[\s\S]*\]/);
-    if(!match) throw new Error('No JSON array found in response');
+    if(!match) throw new Error('No transaction data found. Try a clearer PDF.');
     const txns=JSON.parse(match[0]);
 
     if(!Array.isArray(txns)||txns.length===0){
@@ -2171,8 +2206,8 @@ ${truncated}`;
     save();renderCards();
     toast(`✓ Imported ${added} transaction${added!==1?'s':''}${skipped?` (${skipped} skipped)`:''}`,3000);
   }catch(e){
-    console.error('Claude parse error:',e);
-    toast('Parsing failed: '+e.message);
+    console.error('Gemini parse error:',e);
+    toast('Parsing failed: '+e.message,5000);
   }
 
   stmtBtn.textContent='📄 Import statement (PDF)';stmtBtn.disabled=false;
@@ -2433,42 +2468,65 @@ function renderCats(){
   document.getElementById('pal').innerHTML=PALETTE.map(c=>`<div class="cdot${c===S.selColor?' on':''}" data-c="${c}" style="background:${c}" onclick="pickColor('${c}')" title="${c}"></div>`).join('');
 }
 
-/* ══ API KEY ══ */
-function getApiKey(){return localStorage.getItem('paisa_anthropic_key')||'';}
-function saveApiKey(){
+/* ══ API KEY (Gemini) ══ */
+function getApiKey(){return localStorage.getItem('paisa_gemini_key')||'';}
+function getWorkerUrl(){return localStorage.getItem('paisa_worker_url')||'';}
+function saveWorkerUrl(){
+  const val=document.getElementById('worker-url-input').value.trim();
+  if(!val){document.getElementById('worker-url-status').textContent='Please enter a URL.';return;}
+  if(!val.startsWith('https://')){document.getElementById('worker-url-status').textContent='URL must start with https://';return;}
+  localStorage.setItem('paisa_worker_url',val);
+  document.getElementById('worker-url-input').value='';
+  updateApiKeyUI();
+  toast('Worker URL saved ✓');
+}
   const val=document.getElementById('api-key-input').value.trim();
   if(!val){document.getElementById('api-key-status').textContent='Please enter a key.';return;}
-  if(!val.startsWith('sk-ant-')){document.getElementById('api-key-status').textContent='That doesn\'t look like a valid Anthropic key (should start with sk-ant-).';return;}
-  localStorage.setItem('paisa_anthropic_key',val);
+  if(!val.startsWith('AIza')){document.getElementById('api-key-status').textContent='That doesn\'t look like a valid Gemini key (should start with AIza).';return;}
+  localStorage.setItem('paisa_gemini_key',val);
+  // Also clear old Anthropic key if present
+  localStorage.removeItem('paisa_anthropic_key');
   document.getElementById('api-key-input').value='';
   updateApiKeyUI();
-  toast('API key saved ✓');
+  toast('Gemini API key saved ✓');
 }
 function clearApiKey(){
-  if(!confirm('Remove the saved API key?'))return;
-  localStorage.removeItem('paisa_anthropic_key');
+  if(!confirm('Remove the saved Gemini API key?'))return;
+  localStorage.removeItem('paisa_gemini_key');
   updateApiKeyUI();
   toast('API key cleared');
 }
 function toggleApiKeyVis(){
   const inp=document.getElementById('api-key-input');
-  const btn=document.getElementById('api-key-vis-btn');
-  if(inp.type==='password'){inp.type='text';btn.textContent='hide';}
-  else{inp.type='password';btn.textContent='show';}
+  const btn=document.getElementById('pwd-vis-btn')||document.getElementById('api-key-vis-btn');
+  if(!inp)return;
+  if(inp.type==='password'){inp.type='text';if(btn)btn.textContent='hide';}
+  else{inp.type='password';if(btn)btn.textContent='show';}
 }
 function updateApiKeyUI(){
   const key=getApiKey();
+  const workerUrl=getWorkerUrl();
   const status=document.getElementById('api-key-status');
   const clearBtn=document.getElementById('api-key-clear-btn');
-  if(!status||!clearBtn)return;
-  if(key){
-    status.textContent='✓ Key saved: '+key.slice(0,12)+'…'+key.slice(-4);
-    status.style.color='var(--sage)';
-    clearBtn.style.display='inline-flex';
-  }else{
-    status.textContent='No key saved. Statement import will not work without one.';
-    status.style.color='var(--ink4)';
-    clearBtn.style.display='none';
+  if(status){
+    if(key){
+      status.innerHTML=`✓ Gemini key saved: <span style="font-family:var(--mono)">${key.slice(0,8)}…${key.slice(-4)}</span>`;
+      status.style.color='var(--sage)';
+    }else{
+      status.textContent='No key saved — get one free at aistudio.google.com';
+      status.style.color='var(--ink4)';
+    }
+  }
+  if(clearBtn)clearBtn.style.display=key?'inline-flex':'none';
+  const wStatus=document.getElementById('worker-url-status');
+  if(wStatus){
+    if(workerUrl){
+      wStatus.innerHTML=`✓ Worker URL: <span style="font-family:var(--mono);font-size:11px">${workerUrl.replace('https://','').slice(0,40)}…</span>`;
+      wStatus.style.color='var(--sage)';
+    }else{
+      wStatus.textContent='No Worker URL saved — follow setup steps above';
+      wStatus.style.color='var(--ink4)';
+    }
   }
 }
 
