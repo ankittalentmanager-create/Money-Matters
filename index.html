@@ -6,9 +6,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Paisa">
+<meta name="apple-mobile-web-app-title" content="Money Matters">
 <meta name="theme-color" content="#1a1714">
-<title>Paisa — Personal Finance</title>
+<title>Money Matters</title>
 <link rel="manifest" id="pwa-manifest">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -27,7 +27,7 @@
   --sh2:0 2px 8px rgba(26,23,20,0.1),0 8px 32px rgba(26,23,20,0.08);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--cream);color:var(--ink);font-family:var(--font);display:flex;overflow:hidden;height:100vh}
+body{background:var(--cream);color:var(--ink);font-family:var(--font);display:flex;overflow:hidden;height:100vh;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-size:14px;line-height:1.5}
 
 /* ─ SIDEBAR ─ */
 .sb{width:240px;height:100vh;background:var(--ink);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
@@ -41,7 +41,7 @@ body{background:var(--cream);color:var(--ink);font-family:var(--font);display:fl
 .sb-hint{font-size:11px;color:rgba(255,255,255,0.28);font-family:var(--mono)}
 .sb-nav{padding:0.5rem 0;flex:1}
 .sb-sec{font-size:10px;font-family:var(--mono);letter-spacing:0.1em;color:rgba(255,255,255,0.22);padding:0.9rem 1.5rem 0.3rem;text-transform:uppercase}
-.ni{display:flex;align-items:center;gap:10px;padding:8px 1.5rem;cursor:pointer;color:rgba(255,255,255,0.48);font-size:13px;font-weight:500;transition:all 0.15s;position:relative}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 1.5rem;cursor:pointer;color:rgba(255,255,255,0.48);font-size:13px;font-weight:500;transition:all 0.15s;position:relative;letter-spacing:0.01em}
 .ni:hover{color:rgba(255,255,255,0.82);background:rgba(255,255,255,0.04)}
 .ni.on{color:#faf8f3;background:rgba(255,255,255,0.08)}
 .ni.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--rust2);border-radius:0 2px 2px 0}
@@ -53,26 +53,26 @@ body{background:var(--cream);color:var(--ink);font-family:var(--font);display:fl
 .sb-box-val{font-size:18px;font-weight:600;color:#faf8f3;font-family:var(--mono);letter-spacing:-0.5px}
 
 /* ─ MAIN ─ */
-.main{flex:1;min-width:0;padding:2.25rem 2.25rem 4rem;overflow-y:auto;height:100vh}
+.main{flex:1;min-width:0;padding:2.5rem 2.5rem 4rem;overflow-y:auto;height:100vh}
 .page{display:none}
 .page.on{display:block;animation:pi 0.2s ease}
 @keyframes pi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.pg-title{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--ink);margin-bottom:0.15rem;line-height:1.2}
-.pg-sub{font-size:13px;color:var(--ink3);margin-bottom:1.6rem;line-height:1.5}
+.pg-title{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);margin-bottom:0.2rem;line-height:1.25}
+.pg-sub{font-size:13px;color:var(--ink3);margin-bottom:1.8rem;line-height:1.7}
 
 /* ─ CARDS ─ */
-.card{background:#fff;border-radius:16px;box-shadow:var(--sh);padding:1.4rem}
+.card{background:#fff;border-radius:16px;box-shadow:var(--sh);padding:1.6rem}
 .card+.card,.card+.mt1{margin-top:14px}
-.card-title{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.1rem;font-family:var(--mono)}
+.card-title{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:1.2rem;font-family:var(--mono)}
 
 /* ─ STAT GRID ─ */
-.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;margin-bottom:1.4rem}
-.stat{background:#fff;border-radius:14px;box-shadow:var(--sh);padding:1rem 1.2rem;position:relative;overflow:hidden;transition:box-shadow 0.2s;cursor:default}
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:1.6rem}
+.stat{background:#fff;border-radius:14px;box-shadow:var(--sh);padding:1.1rem 1.3rem;position:relative;overflow:hidden;transition:box-shadow 0.2s;cursor:default}
 .stat:hover{box-shadow:var(--sh2)}
 .stat-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
-.stat-lbl{font-size:10px;font-family:var(--mono);color:var(--ink3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:7px}
-.stat-val{font-size:20px;font-weight:700;font-family:var(--mono);letter-spacing:-0.5px}
-.stat-sub{font-size:10px;color:var(--ink4);margin-top:3px;font-family:var(--mono)}
+.stat-lbl{font-size:9.5px;font-family:var(--mono);color:var(--ink3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px}
+.stat-val{font-size:19px;font-weight:700;font-family:var(--mono);letter-spacing:-0.5px;line-height:1.2}
+.stat-sub{font-size:10px;color:var(--ink4);margin-top:4px;font-family:var(--mono)}
 
 /* ─ FORMS ─ */
 input,select,textarea{background:var(--cream);border:1.5px solid var(--cream3);border-radius:10px;color:var(--ink);font-family:var(--font);font-size:13px;padding:9px 13px;width:100%;outline:none;transition:border-color 0.18s,background 0.18s;-webkit-appearance:none;appearance:none}
@@ -109,7 +109,7 @@ select option{background:#fff}
 /* ─ ENTRY TABLE ─ */
 .t-head{display:grid;gap:10px;padding:0 0 8px;border-bottom:1.5px solid var(--cream3);font-size:10px;font-weight:600;color:var(--ink3);letter-spacing:0.08em;text-transform:uppercase;font-family:var(--mono)}
 .t-head.log-cols,.erow.log-cols{grid-template-columns:76px 1fr 120px 105px 28px}
-.erow{display:grid;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--cream2);font-size:13px;animation:rin 0.18s ease}
+.erow{display:grid;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--cream2);font-size:13px;animation:rin 0.18s ease}
 .erow:last-child{border-bottom:none}
 @keyframes rin{from{opacity:0;background:var(--rust3)}to{opacity:1;background:transparent}}
 .e-date{font-family:var(--mono);font-size:12px;color:var(--ink3)}
@@ -215,6 +215,14 @@ select option{background:#fff}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--cream4);border-radius:3px}
 
+/* ─ INVESTMENTS TABS ─ */
+.inv-tab-content{display:none}.inv-tab-content.on{display:block}
+
+/* ─ PORT TABLE compact ─ */
+.port-head{display:grid;grid-template-columns:1fr 72px 56px 95px 115px 105px 95px 28px;gap:8px;padding:0 0 8px;border-bottom:1.5px solid var(--cream3);font-size:9.5px;font-weight:700;color:var(--ink3);letter-spacing:0.07em;text-transform:uppercase;font-family:var(--mono)}
+.port-row{display:grid;grid-template-columns:1fr 72px 56px 95px 115px 105px 95px 28px;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--cream2);font-size:13px}
+.port-row:last-child{border-bottom:none}
+
 /* ══════════════════════════════════
    DESKTOP — sidebar visible, no bottom nav
 ══════════════════════════════════ */
@@ -247,7 +255,7 @@ select option{background:#fff}
     position:sticky;top:0;z-index:100;
   }
   .mob-header-title{
-    font-size:16px;font-weight:700;color:var(--ink);
+    font-size:15px;font-weight:700;color:var(--ink);
     display:flex;align-items:center;gap:6px;
     font-family:'Plus Jakarta Sans',sans-serif;
     letter-spacing:-0.2px;
@@ -255,7 +263,7 @@ select option{background:#fff}
   .mob-header-right{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--ink3)}
 
   /* ── Page content padding ── */
-  .page{padding:0.85rem 0.9rem 0.5rem}
+  .page{padding:1rem 1rem 0.5rem}
 
   /* ── Page title — compact ── */
   .pg-title{font-size:18px!important;margin-bottom:0.75rem!important;font-family:'Plus Jakarta Sans',sans-serif!important;font-style:normal!important;font-weight:700!important}
@@ -269,10 +277,32 @@ select option{background:#fff}
     margin-bottom:0.85rem!important;
   }
   .stat-grid .stat:nth-child(5){grid-column:span 2}
-  .stat{padding:0.8rem 0.9rem!important;border-radius:12px!important}
+  .stat{padding:0.85rem 0.95rem!important;border-radius:12px!important}
   .stat-lbl{font-size:9px!important;margin-bottom:4px!important;letter-spacing:0.04em!important}
   .stat-val{font-size:16px!important;letter-spacing:-0.3px!important}
   .stat-sub{font-size:9px!important;margin-top:2px!important}
+
+  /* ── Received form — stack on mobile ── */
+  .recv-form-grid{
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+  }
+  .recv-form-grid .recv-btn-full{grid-column:span 2;width:100%}
+
+  /* ── Investments page tabs ── */
+  #inv-main-tabs{overflow-x:auto;flex-wrap:nowrap!important;padding-bottom:2px}
+  #inv-main-tabs .cc-tab-btn{white-space:nowrap}
+
+  /* ── Portfolio table — hide on mobile (show mobile inline) ── */
+  .port-head{display:none!important}
+  .port-row{grid-template-columns:1fr 28px!important;gap:4px!important}
+  .port-row>span:not(:first-child):not(:last-child){display:none!important}
+  .port-row>div:not(:first-child):not(:last-child){display:none!important}
+  .port-mob-inline{display:flex!important}
+  
+  /* ── g2 single column ── */
+  .g2{grid-template-columns:1fr!important}
+  .g3{grid-template-columns:1fr!important}
 
   /* ── Cards ── */
   .card{padding:0.9rem!important;border-radius:14px!important;margin-bottom:8px!important}
@@ -519,11 +549,11 @@ select option{background:#fff}
   padding:2rem;
 ">
   <div style="text-align:center;margin-bottom:2.5rem">
-    <div style="font-family:'Playfair Display',serif;font-size:36px;color:#faf8f3;font-style:italic;display:flex;align-items:center;gap:10px;justify-content:center">
+    <div style="font-family:'Playfair Display',serif;font-size:30px;color:#faf8f3;font-style:italic;display:flex;align-items:center;gap:10px;justify-content:center">
       <div style="width:10px;height:10px;border-radius:50%;background:#e8673a;flex-shrink:0"></div>
-      Paisa
+      Money Matters
     </div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em">personal finance</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:6px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em">your money, your way</div>
   </div>
 
   <!-- PIN dots -->
@@ -571,9 +601,9 @@ select option{background:#fff}
   <div id="sb-head-area">
     <div class="sb-head">
       <div class="sb-logo" onclick="startEditName()" title="Click to edit name">
-        <div class="dot"></div><span id="sb-name">Paisa</span>
+        <div class="dot"></div><span id="sb-name">Money Matters</span>
       </div>
-      <div class="sb-sub">personal finance</div>
+      <div class="sb-sub">your money, your way</div>
     </div>
   </div>
   <div class="sb-edit" id="sb-edit">
@@ -592,8 +622,7 @@ select option{background:#fff}
     <div class="ni"    onclick="nav('fixed',this)"><span class="ni-ic">◉</span><span>Fixed expenses</span></div>
     <div class="ni"    onclick="nav('cards',this)"><span class="ni-ic">▭</span><span>Credit cards</span></div>
     <div class="sb-sec">Wealth</div>
-    <div class="ni"    onclick="nav('goals',this)"><span class="ni-ic">◎</span><span>Goals & investments</span></div>
-    <div class="ni"    onclick="nav('portfolio',this)"><span class="ni-ic">◬</span><span>Portfolio tracker</span></div>
+    <div class="ni"    onclick="nav('investments',this)"><span class="ni-ic">◬</span><span>Investments</span></div>
     <div class="ni"    onclick="nav('networth',this)"><span class="ni-ic">◑</span><span>Net worth</span></div>
     <div class="sb-sec">Settings</div>
     <div class="ni"    onclick="nav('categories',this)"><span class="ni-ic">◈</span><span>Categories</span></div>
@@ -625,12 +654,12 @@ select option{background:#fff}
     <div class="pg-sub">Your complete financial picture at a glance.</div>
     <!-- Mobile-only hero card -->
     <div id="mob-nw-hero" style="display:none;background:var(--ink);border-radius:16px;padding:1.1rem 1.2rem;margin-bottom:10px;color:#fff">
-      <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">Net worth</div>
+      <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px">This month</div>
       <div style="font-size:28px;font-weight:700;font-family:var(--mono);letter-spacing:-1px" id="mob-nw-val">₹0</div>
       <div style="display:flex;gap:16px;margin-top:10px">
         <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Income</div><div style="font-size:14px;font-weight:600;font-family:var(--mono);color:rgba(255,255,255,0.85)" id="mob-inc-val">₹0</div></div>
         <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Spent</div><div style="font-size:14px;font-weight:600;font-family:var(--mono);color:#ff8c6a" id="mob-spent-val">₹0</div></div>
-        <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Saved</div><div style="font-size:14px;font-weight:600;font-family:var(--mono)" id="mob-saved-val" style="color:#4ecdc4">₹0</div></div>
+        <div><div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em">Saved</div><div style="font-size:14px;font-weight:600;font-family:var(--mono)" id="mob-saved-val">₹0</div></div>
       </div>
     </div>
     <div class="stat-grid" id="stats"></div>
@@ -755,10 +784,12 @@ select option{background:#fff}
     <div class="pg-title">Received payments</div>
     <div class="pg-sub">Money received from friends, clients, or anyone else. Counts toward your income this month.</div>
     <div class="card mt1">
-      <div style="display:grid;grid-template-columns:100px 1fr 150px 130px auto;gap:10px;align-items:center;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:10px;align-items:start;margin-bottom:14px">
         <input type="date" id="recv-date">
-        <input type="text" id="recv-from" placeholder="Received from (name or note)">
+        <input type="text" id="recv-from" placeholder="Received from">
         <input type="text" id="recv-reason" placeholder="Reason / reference">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-bottom:6px">
         <input type="number" id="recv-amt" placeholder="₹ Amount" min="1">
         <button class="btn-sage" onclick="addReceived()">Add</button>
       </div>
@@ -811,98 +842,185 @@ select option{background:#fff}
     </div>
   </div>
 
-  <!-- GOALS & INVESTMENTS -->
-  <div class="page" id="pg-goals">
-    <div class="pg-title">Goals & investments</div>
-    <div class="pg-sub">Track monthly SIPs, savings goals, and overall savings corpus.</div>
+  <!-- INVESTMENTS (merged Goals + Portfolio) -->
+  <div class="page" id="pg-investments">
+    <div class="pg-title">Investments</div>
+    <div class="pg-sub">Portfolio, savings corpus, goals, and all your wealth instruments in one place.</div>
 
-    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">Monthly investments</div>
-    <div class="card" style="margin-bottom:1.4rem">
-      <div id="inv-list"></div>
-      <div style="display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px;align-items:center">
-        <input id="inv-inp" placeholder="Investment name (e.g. SIP — Nifty 50, Gold ETF, PPF)">
-        <button class="btn-sage" onclick="addInvestment()">+ Add</button>
-      </div>
-      <div class="err" id="inv-err"></div>
+    <!-- Section tabs -->
+    <div id="inv-main-tabs" style="display:flex;gap:6px;margin-bottom:1.4rem;flex-wrap:wrap">
+      <div class="cc-tab-btn on" onclick="setInvTab('portfolio',this)">Portfolio</div>
+      <div class="cc-tab-btn" onclick="setInvTab('corpus',this)">Savings corpus</div>
+      <div class="cc-tab-btn" onclick="setInvTab('goals',this)">Goals</div>
+      <div class="cc-tab-btn" onclick="setInvTab('sips',this)">Monthly SIPs</div>
+      <div class="cc-tab-btn" onclick="setInvTab('instruments',this)">Other instruments</div>
     </div>
 
-    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">Savings corpus</div>
-    <div class="card" style="margin-bottom:1.4rem">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px" id="corpus-stats"></div>
-      <div id="corpus-holdings"></div>
-      <div style="display:grid;grid-template-columns:1fr 160px 130px auto;gap:10px;margin-top:12px;align-items:center">
-        <input id="ch-name" placeholder="Asset name (e.g. FD with SBI, MF — Axis Bluechip)">
-        <select id="ch-type">
-          <option value="fixed">Fixed (FD/RD/PPF)</option>
-          <option value="market">Market-linked (MF/Stocks)</option>
-          <option value="gold">Gold</option>
-          <option value="other">Other</option>
-        </select>
-        <input id="ch-val" type="number" placeholder="Current value ₹" min="1">
-        <button class="btn-sage" onclick="addCorpusHolding()">+ Add</button>
+    <!-- ── PORTFOLIO TAB ── -->
+    <div class="inv-tab-content on" id="invtab-portfolio">
+      <!-- Profile bar -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+        <div style="font-size:10px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em">Profile:</div>
+        <div id="port-profile-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <button class="btn-out" onclick="openAddProfile()" style="padding:4px 11px;font-size:12px">+ Profile</button>
+        <button class="btn-out" onclick="setPortProfile('__all__',null)" id="port-all-btn" style="padding:4px 11px;font-size:12px">All combined</button>
       </div>
-      <div class="err" id="ch-err"></div>
+      <!-- Summary -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div style="display:flex;gap:28px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--mono)" id="port-total-val">₹0</div>
+              <div style="font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:2px">Total value</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--mono)" id="port-cost-val">₹0</div>
+              <div style="font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:2px">Invested</div>
+            </div>
+            <div>
+              <div style="font-size:22px;font-weight:700;font-family:var(--mono)" id="port-gl-val">₹0</div>
+              <div style="font-size:11px;font-family:var(--mono);margin-top:2px" id="port-gl-lbl">Gain / Loss</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <div class="port-refresh" id="port-refresh-lbl">Click to fetch live prices</div>
+            <button class="btn-out" onclick="fetchPrices()">↻ Fetch live</button>
+            <button class="btn-blue" onclick="openAddHolding()">+ Add holding</button>
+          </div>
+        </div>
+      </div>
+      <!-- Asset type tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:12px" id="port-type-tabs">
+        <div class="cc-tab-btn on" onclick="setPortTab('all',this)">All</div>
+        <div class="cc-tab-btn" onclick="setPortTab('stock',this)">Stocks</div>
+        <div class="cc-tab-btn" onclick="setPortTab('mf',this)">Mutual funds</div>
+        <div class="cc-tab-btn" onclick="setPortTab('etf',this)">ETFs</div>
+      </div>
+      <div class="card">
+        <div class="port-head"><span>Name / Symbol</span><span>Profile</span><span>Qty</span><span>Buy price</span><span>Current price</span><span>Value</span><span>Gain / Loss</span><span></span></div>
+        <div id="port-list"></div>
+      </div>
+      <div class="g2 mt1">
+        <div class="card">
+          <div class="card-title">Allocation — all holdings</div>
+          <div style="position:relative;height:200px"><canvas id="port-donut"></canvas></div>
+          <div id="port-donut-legend" style="margin-top:12px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">How to fetch prices</div>
+          <div style="font-size:13px;color:var(--ink3);line-height:1.9">
+            <p style="margin-bottom:10px"><strong style="color:var(--ink)">Stocks / ETFs:</strong> Use NSE symbol — e.g. <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">RELIANCE</code>, <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">HDFCBANK</code></p>
+            <p style="margin-bottom:10px"><strong style="color:var(--ink)">Mutual funds:</strong> Enter the <strong style="color:var(--rust)">AMFI Scheme Code</strong> as symbol (e.g. <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">120503</code>). Find at amfiindia.com</p>
+            <p style="font-size:11px;color:var(--ink4);font-family:var(--mono)">Click any price to edit manually. For tracking only.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">Savings goals</div>
-    <div id="goals-grid" class="g2"></div>
-    <div class="card mt1">
-      <div class="card-title">Add a new goal</div>
-      <div style="display:grid;grid-template-columns:1fr 150px 150px auto;gap:10px;align-items:center">
-        <input id="gn" placeholder="Goal name (e.g. House down payment)">
-        <input id="gt" type="number" placeholder="Target ₹" min="1">
-        <input id="gs" type="number" placeholder="Already saved ₹" min="0">
-        <button class="btn-sage" onclick="addGoal()">Add goal</button>
+    <!-- ── SAVINGS CORPUS TAB ── -->
+    <div class="inv-tab-content" id="invtab-corpus">
+      <div class="card">
+        <div class="card-title">Savings corpus — breakdown by type</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px" id="corpus-stats"></div>
+        <div id="corpus-holdings"></div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 160px 130px auto;gap:10px;align-items:center">
+          <input id="ch-name" placeholder="Asset name (e.g. FD with SBI)">
+          <select id="ch-type">
+            <option value="fixed">Fixed (FD/RD/PPF)</option>
+            <option value="market">Market-linked</option>
+            <option value="gold">Gold</option>
+            <option value="other">Other</option>
+          </select>
+          <input id="ch-val" type="number" placeholder="Current value ₹" min="1">
+          <button class="btn-sage" onclick="addCorpusHolding()">+ Add</button>
+        </div>
+        <div class="err" id="ch-err"></div>
       </div>
-      <div class="err" id="g-err"></div>
     </div>
 
-    <!-- ULIP Plans -->
-    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin:1.4rem 0 8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">ULIP plans</div>
-    <div class="card">
-      <div id="ulip-list"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 120px auto;gap:10px;margin-top:12px;align-items:center">
-        <input id="ulip-name" placeholder="Plan name (e.g. LIC SIIP)">
-        <input id="ulip-insurer" placeholder="Insurer">
-        <input id="ulip-fundval" type="number" placeholder="Current fund value ₹" min="0">
-        <input id="ulip-premium" type="number" placeholder="Annual premium ₹" min="0">
-        <button class="btn-sage" onclick="addUlip()">+ Add</button>
+    <!-- ── GOALS TAB ── -->
+    <div class="inv-tab-content" id="invtab-goals">
+      <div id="goals-grid" class="g2"></div>
+      <div class="card mt1">
+        <div class="card-title">Add a goal</div>
+        <div style="display:grid;grid-template-columns:1fr 150px 150px auto;gap:10px;align-items:center">
+          <input id="gn" placeholder="Goal name (e.g. House down payment)">
+          <input id="gt" type="number" placeholder="Target ₹" min="1">
+          <input id="gs" type="number" placeholder="Already saved ₹" min="0">
+          <button class="btn-sage" onclick="addGoal()">Add goal</button>
+        </div>
+        <div class="err" id="g-err"></div>
       </div>
-      <div class="err" id="ulip-err"></div>
     </div>
 
-    <!-- SGB -->
-    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin:1.4rem 0 8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">Sovereign Gold Bonds (SGB)</div>
-    <div class="card">
-      <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">Current gold price: ₹<input id="sgb-gold-price" type="number" value="${S.sgbGoldPrice||9200}" min="0" style="width:100px;display:inline-block;padding:4px 8px;font-size:13px" oninput="updateSgbGoldPrice(this.value)"> /gram · SGBs track 1g gold per unit</div>
-      <div id="sgb-list"></div>
-      <div style="display:grid;grid-template-columns:1fr 120px 100px 120px auto;gap:10px;margin-top:12px;align-items:center">
-        <input id="sgb-name" placeholder="Series (e.g. SGB 2021-22 S3)">
-        <input id="sgb-units" type="number" placeholder="Units" min="1" step="any">
-        <input id="sgb-issue" type="number" placeholder="Issue price ₹" min="0" step="any">
-        <input id="sgb-maturity" type="text" placeholder="Maturity (e.g. 2029-03)">
-        <button class="btn-sage" onclick="addSgb()">+ Add</button>
+    <!-- ── MONTHLY SIPS TAB ── -->
+    <div class="inv-tab-content" id="invtab-sips">
+      <div class="card">
+        <div class="card-title">Monthly SIPs & recurring investments</div>
+        <div id="inv-list"></div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center">
+          <input id="inv-inp" placeholder="Investment name (e.g. SIP — Nifty 50, Gold ETF, PPF)">
+          <button class="btn-sage" onclick="addInvestment()">+ Add</button>
+        </div>
+        <div class="err" id="inv-err"></div>
       </div>
-      <div class="err" id="sgb-err"></div>
     </div>
 
-    <!-- PPF / EPF -->
-    <div style="font-size:11px;font-weight:600;color:var(--ink3);margin:1.4rem 0 8px;font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase">PPF / EPF / NPS</div>
-    <div class="card">
-      <div id="ppf-list"></div>
-      <div style="display:grid;grid-template-columns:120px 1fr 140px 140px auto;gap:10px;margin-top:12px;align-items:center">
-        <select id="ppf-type">
-          <option value="ppf">PPF</option>
-          <option value="epf">EPF</option>
-          <option value="nps">NPS</option>
-          <option value="other">Other</option>
-        </select>
-        <input id="ppf-name" placeholder="Account / description">
-        <input id="ppf-balance" type="number" placeholder="Current balance ₹" min="0">
-        <input id="ppf-yearly" type="number" placeholder="Yearly contribution ₹" min="0">
-        <button class="btn-sage" onclick="addPpf()">+ Add</button>
+    <!-- ── OTHER INSTRUMENTS TAB ── -->
+    <div class="inv-tab-content" id="invtab-instruments">
+
+      <!-- ULIP -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">ULIP plans</div>
+        <div id="ulip-list"></div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 130px 130px auto;gap:10px;align-items:center">
+          <input id="ulip-name" placeholder="Plan name (e.g. LIC SIIP)">
+          <input id="ulip-insurer" placeholder="Insurer">
+          <input id="ulip-fundval" type="number" placeholder="Fund value ₹" min="0">
+          <input id="ulip-premium" type="number" placeholder="Annual premium ₹" min="0">
+          <button class="btn-sage" onclick="addUlip()">+ Add</button>
+        </div>
+        <div class="err" id="ulip-err"></div>
       </div>
-      <div class="err" id="ppf-err"></div>
+
+      <!-- SGB -->
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-title">Sovereign Gold Bonds (SGB)</div>
+        <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">Gold price: ₹<input id="sgb-gold-price" type="number" value="9200" min="0" style="width:90px;display:inline-block;padding:4px 8px;font-size:12px;margin:0 4px" oninput="updateSgbGoldPrice(this.value)">/gram · 1 unit = 1g gold</div>
+        <div id="sgb-list"></div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 100px 100px 120px auto;gap:10px;align-items:center">
+          <input id="sgb-name" placeholder="Series (e.g. SGB 2021-22 S3)">
+          <input id="sgb-units" type="number" placeholder="Units" min="1" step="any">
+          <input id="sgb-issue" type="number" placeholder="Issue price ₹" min="0" step="any">
+          <input id="sgb-maturity" type="text" placeholder="Maturity">
+          <button class="btn-sage" onclick="addSgb()">+ Add</button>
+        </div>
+        <div class="err" id="sgb-err"></div>
+      </div>
+
+      <!-- PPF/EPF -->
+      <div class="card">
+        <div class="card-title">PPF / EPF / NPS</div>
+        <div id="ppf-list"></div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:110px 1fr 140px 140px auto;gap:10px;align-items:center">
+          <select id="ppf-type">
+            <option value="ppf">PPF</option>
+            <option value="epf">EPF</option>
+            <option value="nps">NPS</option>
+            <option value="other">Other</option>
+          </select>
+          <input id="ppf-name" placeholder="Account / description">
+          <input id="ppf-balance" type="number" placeholder="Balance ₹" min="0">
+          <input id="ppf-yearly" type="number" placeholder="Yearly contribution ₹" min="0">
+          <button class="btn-sage" onclick="addPpf()">+ Add</button>
+        </div>
+        <div class="err" id="ppf-err"></div>
+      </div>
     </div>
   </div>
 
@@ -913,9 +1031,14 @@ select option{background:#fff}
 
     <!-- Hero number -->
     <div class="card" style="background:var(--ink);color:#fff;margin-bottom:14px">
-      <div style="font-size:12px;font-family:var(--mono);color:rgba(255,255,255,0.45);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Total net worth</div>
-      <div style="font-size:36px;font-weight:700;font-family:var(--mono);letter-spacing:-1px" id="nw-hero">₹0</div>
-      <div style="font-size:12px;font-family:var(--mono);color:rgba(255,255,255,0.4);margin-top:4px" id="nw-sub">Assets − Liabilities</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:11px;font-family:var(--mono);color:rgba(255,255,255,0.45);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Total net worth</div>
+          <div style="font-size:36px;font-weight:700;font-family:var(--mono);letter-spacing:-1px" id="nw-hero">₹0</div>
+          <div style="font-size:12px;font-family:var(--mono);color:rgba(255,255,255,0.4);margin-top:4px" id="nw-sub">Assets − Liabilities</div>
+        </div>
+        <button class="btn-out" onclick="nav('investments',document.querySelector('.ni[onclick*=investments]'))" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);font-size:11px;padding:5px 12px;margin-top:2px">View investments →</button>
+      </div>
     </div>
 
     <div class="g2">
@@ -959,75 +1082,6 @@ select option{background:#fff}
       <div class="card-title">Asset breakdown</div>
       <div style="position:relative;height:220px"><canvas id="nw-donut"></canvas></div>
       <div id="nw-legend" style="margin-top:12px;display:flex;flex-direction:column;gap:5px"></div>
-    </div>
-  </div>
-
-  <!-- PORTFOLIO TRACKER -->
-  <div class="page" id="pg-portfolio">
-    <div class="pg-title">Portfolio tracker</div>
-    <div class="pg-sub">Track stocks and mutual funds across multiple profiles. Prices editable manually or via live fetch.</div>
-
-    <!-- Profile bar -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap">
-      <div style="font-size:11px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:0.06em;margin-right:4px">Profile:</div>
-      <div id="port-profile-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-      <button class="btn-out" onclick="openAddProfile()" style="padding:5px 12px;font-size:12px">+ Add profile</button>
-      <button class="btn-out" onclick="setPortProfile('__all__',null)" id="port-all-btn" style="padding:5px 12px;font-size:12px">Combined view</button>
-    </div>
-
-    <!-- Summary bar -->
-    <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
-        <div style="display:flex;gap:24px;flex-wrap:wrap">
-          <div>
-            <div style="font-size:22px;font-weight:700;font-family:var(--mono)" id="port-total-val">₹0</div>
-            <div style="font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:1px">Total value</div>
-          </div>
-          <div>
-            <div style="font-size:22px;font-weight:700;font-family:var(--mono)" id="port-cost-val">₹0</div>
-            <div style="font-size:11px;color:var(--ink3);font-family:var(--mono);margin-top:1px">Invested cost</div>
-          </div>
-          <div>
-            <div style="font-size:22px;font-weight:700;font-family:var(--mono)" id="port-gl-val">₹0</div>
-            <div style="font-size:11px;font-family:var(--mono);margin-top:1px" id="port-gl-lbl">Gain / Loss</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <div class="port-refresh" id="port-refresh-lbl" style="font-size:11px;color:var(--ink3);font-family:var(--mono)">Click to fetch live prices</div>
-          <button class="btn-out" onclick="fetchPrices()">↻ Fetch live prices</button>
-          <button class="btn-blue" onclick="openAddHolding()">+ Add holding</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Asset type tabs -->
-    <div style="display:flex;gap:6px;margin-bottom:14px" id="port-type-tabs">
-      <div class="cc-tab-btn on" onclick="setPortTab('all',this)">All holdings</div>
-      <div class="cc-tab-btn" onclick="setPortTab('stock',this)">Stocks</div>
-      <div class="cc-tab-btn" onclick="setPortTab('mf',this)">Mutual funds</div>
-      <div class="cc-tab-btn" onclick="setPortTab('etf',this)">ETFs</div>
-    </div>
-
-    <div class="card">
-      <div class="port-head"><span>Name / Symbol</span><span>Profile</span><span>Qty</span><span>Buy price</span><span>Current price ↻</span><span>Value</span><span>Gain / Loss</span><span></span></div>
-      <div id="port-list"></div>
-    </div>
-
-    <div class="g2 mt1">
-      <div class="card">
-        <div class="card-title">Allocation — all holdings combined</div>
-        <div style="position:relative;height:220px"><canvas id="port-donut"></canvas></div>
-        <div id="port-donut-legend" style="margin-top:12px"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How to fetch mutual fund NAVs</div>
-        <div style="font-size:13px;color:var(--ink3);line-height:1.8">
-          <p style="margin-bottom:10px"><strong style="color:var(--ink)">For stocks / ETFs:</strong> Use the NSE symbol — e.g. <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">RELIANCE</code>, <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">HDFCBANK</code>, <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">NIFTYBEES</code>. Fetched via Yahoo Finance (.NS suffix).</p>
-          <p style="margin-bottom:10px"><strong style="color:var(--ink)">For mutual funds:</strong> Enter the fund's <strong style="color:var(--rust)">AMFI Scheme Code</strong> as the symbol (e.g. <code style="background:var(--cream2);padding:1px 6px;border-radius:4px;font-family:var(--mono)">120503</code> for Axis Bluechip). NAV is fetched directly from <strong style="color:var(--ink)">AMFI's official API</strong> — no proxy needed, always up to date.</p>
-          <p style="margin-bottom:10px">Find your scheme code at <strong style="color:var(--ink)">amfiindia.com</strong> → NAV History → search your fund name.</p>
-          <p style="font-size:11px;color:var(--ink4);font-family:var(--mono)">Manual entry always works — click any price field to edit. For tracking only, not financial advice.</p>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -1310,9 +1364,9 @@ select option{background:#fff}
       <span class="mob-nav-label">Cards</span>
       <div class="mob-nav-dot"></div>
     </button>
-    <button class="mob-nav-item" id="mni-portfolio" onclick="mobNav('portfolio','mni-portfolio')">
+    <button class="mob-nav-item" id="mni-investments" onclick="mobNav('investments','mni-investments')">
       <span class="mob-nav-icon">◬</span>
-      <span class="mob-nav-label">Portfolio</span>
+      <span class="mob-nav-label">Invest</span>
       <div class="mob-nav-dot"></div>
     </button>
     <button class="mob-nav-item" id="mni-more" onclick="openMobMore()">
@@ -1350,7 +1404,7 @@ select option{background:#fff}
   <div class="mob-more-bg" onclick="closeMobMore()"></div>
   <div class="mob-more-sheet">
     <div style="display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--cream2);margin-bottom:6px">
-      <div style="font-family:var(--serif);font-size:18px;font-style:italic">Paisa</div>
+      <div style="font-family:var(--serif);font-size:17px;font-style:italic">Money Matters</div>
       <div style="font-size:12px;font-family:var(--mono);color:var(--ink3);flex:1;text-align:right" id="mob-more-date"></div>
     </div>
     <div class="mob-more-item" onclick="mobNav('calendar','');closeMobMore()"><span class="mob-more-ic">▦</span><div><div class="mob-more-txt">Calendar</div></div></div>
@@ -1358,7 +1412,7 @@ select option{background:#fff}
     <div class="mob-more-item" onclick="mobNav('income','');closeMobMore()"><span class="mob-more-ic">⊕</span><div><div class="mob-more-txt">Income</div></div></div>
     <div class="mob-more-item" onclick="mobNav('received','');closeMobMore()"><span class="mob-more-ic">↙</span><div><div class="mob-more-txt">Received payments</div></div></div>
     <div class="mob-more-item" onclick="mobNav('fixed','');closeMobMore()"><span class="mob-more-ic">◉</span><div><div class="mob-more-txt">Fixed expenses</div></div></div>
-    <div class="mob-more-item" onclick="mobNav('goals','');closeMobMore()"><span class="mob-more-ic">◎</span><div><div class="mob-more-txt">Goals & investments</div></div></div>
+    <div class="mob-more-item" onclick="mobNav('investments','');closeMobMore()"><span class="mob-more-ic">◬</span><div><div class="mob-more-txt">Investments</div></div></div>
     <div class="mob-more-item" onclick="mobNav('networth','');closeMobMore()"><span class="mob-more-ic">◑</span><div><div class="mob-more-txt">Net worth</div></div></div>
     <div class="mob-more-item" onclick="mobNav('categories','');closeMobMore()"><span class="mob-more-ic">◈</span><div><div class="mob-more-txt">Categories</div></div></div>
     <div class="mob-more-item" onclick="mobNav('backup','');closeMobMore()"><span class="mob-more-ic">⬡</span><div><div class="mob-more-txt">Data & backup</div></div></div>
@@ -1572,7 +1626,7 @@ function startRealtimeSync(){
         const pageId=activePage.id.replace('pg-','');
         const map={dashboard:renderDashboard,calendar:renderCalendar,trends:renderTrends,
           log:renderLog,income:renderIncome,received:renderReceived,fixed:renderFixed,
-          cards:renderCards,goals:renderGoals,portfolio:renderPortfolio,categories:renderCats,backup:renderBackup};
+          cards:renderCards,investments:renderInvestments,categories:renderCats,backup:renderBackup};
         if(map[pageId]) map[pageId]();
       }
       renderSidebar();
@@ -1619,14 +1673,14 @@ function nav(id,el){
   if(el)el.classList.add('on');
   const map={dashboard:renderDashboard,calendar:renderCalendar,trends:renderTrends,log:renderLog,
     income:renderIncome,received:renderReceived,fixed:renderFixed,cards:renderCards,
-    goals:renderGoals,portfolio:renderPortfolio,categories:renderCats,backup:renderBackup,
+    investments:renderInvestments,categories:renderCats,backup:renderBackup,
     networth:renderNetWorth};
   if(map[id])map[id]();
 }
 
 /* ══ NAME ══ */
 function startEditName(){document.getElementById('sb-head-area').style.display='none';document.getElementById('sb-edit').style.display='flex';const i=document.getElementById('name-inp');i.value=S.name;i.focus();}
-function saveName(){S.name=document.getElementById('name-inp').value.trim()||S.name;document.getElementById('sb-name').textContent=S.name||'Paisa';document.getElementById('sb-edit').style.display='none';document.getElementById('sb-head-area').style.display='block';save();updateGreeting();}
+function saveName(){S.name=document.getElementById('name-inp').value.trim()||S.name;document.getElementById('sb-name').textContent=S.name||'Money Matters';document.getElementById('sb-edit').style.display='none';document.getElementById('sb-head-area').style.display='block';save();updateGreeting();}
 function renderSidebar(){const me=meEntries(),total=me.reduce((s,e)=>s+e.amt,0)+totFix();document.getElementById('sb-total').textContent=fmt(total);}
 function updateGreeting(){const h=new Date().getHours();const g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';const el=document.getElementById('greeting');if(el)el.textContent=g+(S.name?', '+S.name:'')+'. ';}
 function syncDropdowns(){const opts='<option value="">Category</option>'+S.cats.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');['e-cat','fx-c','cctx-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});}
@@ -1698,18 +1752,18 @@ function delCat(name){if(['Other','Utilities','Food & groceries','Investment'].i
 function pickColor(c){S.selColor=c;document.querySelectorAll('.cdot').forEach(d=>d.classList.toggle('on',d.dataset.c===c));}
 
 /* ══ GOALS ══ */
-function addGoal(){const n=document.getElementById('gn').value.trim(),t=parseFloat(document.getElementById('gt').value),sv=parseFloat(document.getElementById('gs').value)||0,err=document.getElementById('g-err');if(!n||isNaN(t)||t<=0){err.textContent='Enter name and target.';return;}err.textContent='';S.goals.push({id:Date.now(),name:n,target:t,saved:sv});document.getElementById('gn').value='';document.getElementById('gt').value='';document.getElementById('gs').value='';save();renderGoals();}
-function delGoal(id){S.goals=S.goals.filter(g=>g.id!==id);save();renderGoals();}
-function liveGoalSaved(id,el){const g=S.goals.find(g=>g.id===id);if(g){g.saved=parseFloat(el.value)||0;save();renderGoals();}}
+function addGoal(){const n=document.getElementById('gn').value.trim(),t=parseFloat(document.getElementById('gt').value),sv=parseFloat(document.getElementById('gs').value)||0,err=document.getElementById('g-err');if(!n||isNaN(t)||t<=0){err.textContent='Enter name and target.';return;}err.textContent='';S.goals.push({id:Date.now(),name:n,target:t,saved:sv});document.getElementById('gn').value='';document.getElementById('gt').value='';document.getElementById('gs').value='';save();renderInvestments();}
+function delGoal(id){S.goals=S.goals.filter(g=>g.id!==id);save();renderInvestments();}
+function liveGoalSaved(id,el){const g=S.goals.find(g=>g.id===id);if(g){g.saved=parseFloat(el.value)||0;save();renderInvestments();}}
 
 /* ══ INVESTMENTS ══ */
-function addInvestment(){const name=document.getElementById('inv-inp').value.trim(),err=document.getElementById('inv-err');if(!name){err.textContent='Enter investment name.';return;}err.textContent='';S.investments.push({id:Date.now(),name,amt:0});document.getElementById('inv-inp').value='';save();renderGoals();renderDashboard();}
-function delInvestment(id){S.investments=S.investments.filter(i=>i.id!==id);save();renderGoals();renderDashboard();}
+function addInvestment(){const name=document.getElementById('inv-inp').value.trim(),err=document.getElementById('inv-err');if(!name){err.textContent='Enter investment name.';return;}err.textContent='';S.investments.push({id:Date.now(),name,amt:0});document.getElementById('inv-inp').value='';save();renderInvestments();renderDashboard();}
+function delInvestment(id){S.investments=S.investments.filter(i=>i.id!==id);save();renderInvestments();renderDashboard();}
 function liveInvAmt(id,el){const i=S.investments.find(i=>i.id===id);if(i){i.amt=parseFloat(el.value)||0;const t=document.getElementById('inv-total-val');if(t)t.textContent=fmt(totInv());save();renderDashboard();renderSidebar();}}
 
 /* ══ CORPUS HOLDINGS ══ */
-function addCorpusHolding(){const name=document.getElementById('ch-name').value.trim(),type=document.getElementById('ch-type').value,value=parseFloat(document.getElementById('ch-val').value),err=document.getElementById('ch-err');if(!name||isNaN(value)||value<=0){err.textContent='Enter name and value.';return;}err.textContent='';S.corpusHoldings.push({id:Date.now(),name,type,value});document.getElementById('ch-name').value='';document.getElementById('ch-val').value='';save();renderGoals();renderDashboard();}
-function delCorpusHolding(id){S.corpusHoldings=S.corpusHoldings.filter(h=>h.id!==id);save();renderGoals();renderDashboard();}
+function addCorpusHolding(){const name=document.getElementById('ch-name').value.trim(),type=document.getElementById('ch-type').value,value=parseFloat(document.getElementById('ch-val').value),err=document.getElementById('ch-err');if(!name||isNaN(value)||value<=0){err.textContent='Enter name and value.';return;}err.textContent='';S.corpusHoldings.push({id:Date.now(),name,type,value});document.getElementById('ch-name').value='';document.getElementById('ch-val').value='';save();renderInvestments();renderDashboard();}
+function delCorpusHolding(id){S.corpusHoldings=S.corpusHoldings.filter(h=>h.id!==id);save();renderInvestments();renderDashboard();}
 function liveCorpusVal(id,el){const h=S.corpusHoldings.find(h=>h.id===id);if(h){h.value=parseFloat(el.value)||0;const t=document.getElementById('corpus-total-val');if(t)t.textContent=fmt(totCorpus());save();renderDashboard();}}
 
 /* ══ PORTFOLIO ══ */
@@ -1976,7 +2030,27 @@ function renderPortfolioChart(){
   }).join('');
 }
 
-/* ══ STATEMENT IMPORT — PDF.js + Claude ══ */
+/* ══ INVESTMENTS — merged page ══ */
+let _currentInvTab='portfolio';
+function setInvTab(tab,el){
+  _currentInvTab=tab;
+  document.querySelectorAll('#inv-main-tabs .cc-tab-btn').forEach(b=>b.classList.remove('on'));
+  if(el)el.classList.add('on');
+  document.querySelectorAll('.inv-tab-content').forEach(c=>c.classList.remove('on'));
+  const tc=document.getElementById('invtab-'+tab);
+  if(tc)tc.classList.add('on');
+  // Render the relevant section
+  if(tab==='portfolio')renderPortfolio();
+  else if(tab==='corpus'||tab==='goals'||tab==='sips'||tab==='instruments')renderGoals();
+}
+
+function renderInvestments(){
+  // Render the active sub-tab
+  if(_currentInvTab==='portfolio')renderPortfolio();
+  else renderGoals();
+  // Also sync instrument values (gold price etc)
+  renderWealthInstruments();
+}
 
 let _pendingPdfBytes = null;  // Uint8Array — safe from detachment
 
@@ -2430,7 +2504,7 @@ function renderCards(){
   }).join('');
 }
 
-/* GOALS & INVESTMENTS */
+/* GOALS & INVESTMENTS — called from renderInvestments */
 function renderGoals(){
   const inc=totInc(),fix=totFix(),iv=totInv(),corp=totCorpus();
   const me=meEntries(),vs=me.reduce((s,e)=>s+e.amt,0);
@@ -2480,6 +2554,7 @@ function saveWorkerUrl(){
   updateApiKeyUI();
   toast('Worker URL saved ✓');
 }
+function saveApiKey(){
   const val=document.getElementById('api-key-input').value.trim();
   if(!val){document.getElementById('api-key-status').textContent='Please enter a key.';return;}
   if(!val.startsWith('AIza')){document.getElementById('api-key-status').textContent='That doesn\'t look like a valid Gemini key (should start with AIza).';return;}
@@ -2671,13 +2746,13 @@ function addUlip(){
   if(!S.ulips)S.ulips=[];
   S.ulips.push({id:Date.now(),name,insurer,fundValue,premium});
   ['ulip-name','ulip-insurer','ulip-fundval','ulip-premium'].forEach(id=>document.getElementById(id).value='');
-  save();renderGoals();renderNetWorth();
+  save();renderInvestments();renderNetWorth();
 }
-function delUlip(id){S.ulips=S.ulips.filter(u=>u.id!==id);save();renderGoals();renderNetWorth();}
+function delUlip(id){S.ulips=S.ulips.filter(u=>u.id!==id);save();renderInvestments();renderNetWorth();}
 function liveUlipVal(id,el){const u=(S.ulips||[]).find(u=>u.id===id);if(u){u.fundValue=parseFloat(el.value)||0;save();renderNetWorth();}}
 
 /* ══ SGB ══ */
-function updateSgbGoldPrice(val){S.sgbGoldPrice=parseFloat(val)||9200;save();renderGoals();renderNetWorth();}
+function updateSgbGoldPrice(val){S.sgbGoldPrice=parseFloat(val)||9200;save();renderInvestments();renderNetWorth();}
 function addSgb(){
   const name=document.getElementById('sgb-name').value.trim();
   const units=parseFloat(document.getElementById('sgb-units').value)||0;
@@ -2689,9 +2764,9 @@ function addSgb(){
   if(!S.sgbs)S.sgbs=[];
   S.sgbs.push({id:Date.now(),name,units,issuePrice,maturity});
   ['sgb-name','sgb-units','sgb-issue','sgb-maturity'].forEach(id=>document.getElementById(id).value='');
-  save();renderGoals();renderNetWorth();
+  save();renderInvestments();renderNetWorth();
 }
-function delSgb(id){S.sgbs=S.sgbs.filter(s=>s.id!==id);save();renderGoals();renderNetWorth();}
+function delSgb(id){S.sgbs=S.sgbs.filter(s=>s.id!==id);save();renderInvestments();renderNetWorth();}
 
 /* ══ PPF/EPF ══ */
 function addPpf(){
@@ -2705,9 +2780,9 @@ function addPpf(){
   if(!S.ppfEpf)S.ppfEpf=[];
   S.ppfEpf.push({id:Date.now(),type,name,balance,yearly});
   ['ppf-name','ppf-balance','ppf-yearly'].forEach(id=>document.getElementById(id).value='');
-  save();renderGoals();renderNetWorth();
+  save();renderInvestments();renderNetWorth();
 }
-function delPpf(id){S.ppfEpf=S.ppfEpf.filter(p=>p.id!==id);save();renderGoals();renderNetWorth();}
+function delPpf(id){S.ppfEpf=S.ppfEpf.filter(p=>p.id!==id);save();renderInvestments();renderNetWorth();}
 function livePpfBal(id,el){const p=(S.ppfEpf||[]).find(p=>p.id===id);if(p){p.balance=parseFloat(el.value)||0;save();renderNetWorth();}}
 
 /* ══ LIABILITIES ══ */
@@ -2868,21 +2943,20 @@ function renderWealthInstruments(){
 
 /* ══ MOBILE NAV & UI ══ */
 
-const MOB_NAV_IDS=['mni-dashboard','mni-log','mni-cards','mni-portfolio'];
-const MOB_PAGE_NAMES={dashboard:'Home',log:'Expenses',cards:'Cards',portfolio:'Portfolio',calendar:'Calendar',trends:'Trends',income:'Income',received:'Received',fixed:'Fixed',goals:'Goals',categories:'Categories',backup:'Backup',networth:'Net worth'};
+const MOB_NAV_IDS=['mni-dashboard','mni-log','mni-cards','mni-investments'];
+const MOB_PAGE_NAMES={dashboard:'Home',log:'Expenses',cards:'Cards',investments:'Investments',calendar:'Calendar',trends:'Trends',income:'Income',received:'Received',fixed:'Fixed',categories:'Categories',backup:'Backup',networth:'Net worth'};
 
 // FAB config per page: null = hidden
 const MOB_FAB_CONFIG={
   dashboard:{icon:'+',action:'openMobQuickAdd()',title:'Add expense'},
   log:{icon:'+',action:'openMobQuickAdd()',title:'Add expense'},
   cards:{icon:'▭',action:'mobFabCardAction()',title:'Add card / transaction'},
-  portfolio:null,
+  investments:null,
   calendar:null,
   trends:null,
   income:null,
   received:null,
   fixed:null,
-  goals:null,
   categories:null,
   backup:null,
   networth:null,
@@ -2969,9 +3043,9 @@ async function manualSync(){
 /* ══ PWA MANIFEST ══ */
 function injectPWAManifest(){
   const manifest={
-    name:'Paisa — Personal Finance',
-    short_name:'Paisa',
-    description:'Personal expense tracker, portfolio, and financial planner',
+    name:'Money Matters',
+    short_name:'Money',
+    description:'Personal finance tracker — expenses, portfolio, and wealth planner',
     start_url:'.',
     display:'standalone',
     background_color:'#faf8f3',
@@ -2995,17 +3069,17 @@ function generateAppIcon(size){
   // Background
   ctx.fillStyle='#1a1714';
   ctx.fillRect(0,0,size,size);
-  // Dot
+  // Accent dot
   ctx.fillStyle='#e8673a';
   ctx.beginPath();
-  ctx.arc(size*0.28,size*0.42,size*0.06,0,Math.PI*2);
+  ctx.arc(size*0.22,size*0.38,size*0.055,0,Math.PI*2);
   ctx.fill();
-  // Text "P"
+  // Text "M"
   ctx.fillStyle='#faf8f3';
-  ctx.font=`bold ${size*0.52}px Georgia,serif`;
+  ctx.font=`bold ${size*0.48}px Georgia,serif`;
   ctx.textAlign='center';
   ctx.textBaseline='middle';
-  ctx.fillText('P',size*0.56,size*0.52);
+  ctx.fillText('M',size*0.55,size*0.53);
   return canvas.toDataURL('image/png');
 }
 
@@ -3081,9 +3155,9 @@ initPinLock();
 load();
 // Mobile header date
 const mobHdrDate=document.getElementById('mob-header-date');
-if(mobHdrDate)mobHdrDate.textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'}); // load from localStorage immediately
-initFirebase(); // start Firebase
-document.getElementById('sb-name').textContent=S.name||'Paisa';
+if(mobHdrDate)mobHdrDate.textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+initFirebase();
+document.getElementById('sb-name').textContent=S.name||'Money Matters';
 document.getElementById('sb-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
 document.getElementById('e-date').value=today();
 document.getElementById('recv-date').value=today();
