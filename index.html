@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#1a1714">
 <title>Money Matters</title>
 <link rel="manifest" id="pwa-manifest">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
   --cream:#faf8f3;--cream2:#f3f0e8;--cream3:#e8e3d5;--cream4:#d4ccb8;
@@ -20,9 +20,9 @@
   --gold:#b8860b;--gold3:#fdf3d0;
   --plum:#7c3d6b;--teal:#2c6b6b;--blue:#2c4a7c;--indigo:#4b3fa0;
   --card-blue:#1a3a6b;
-  --font:'Outfit',sans-serif;
+  --font:'Inter',sans-serif;
   --serif:'Playfair Display',serif;
-  --mono:'Fira Code',monospace;
+  --mono:'DM Mono',monospace;
   --sh:0 1px 4px rgba(26,23,20,0.07),0 4px 20px rgba(26,23,20,0.05);
   --sh2:0 2px 8px rgba(26,23,20,0.1),0 8px 32px rgba(26,23,20,0.08);
 }
@@ -1016,7 +1016,7 @@ select option{background:#fff}
       </div>
 
       <!-- PPF/EPF -->
-      <div class="card">
+      <div class="card" style="margin-bottom:14px">
         <div class="card-title">PPF / EPF / NPS</div>
         <div id="ppf-list"></div>
         <div class="divider"></div>
@@ -1033,6 +1033,24 @@ select option{background:#fff}
           <button class="btn-sage" onclick="addPpf()">+ Add</button>
         </div>
         <div class="err" id="ppf-err"></div>
+      </div>
+
+      <!-- STRUCTURED PLANS -->
+      <div class="card">
+        <div class="card-title">Structured plans <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink4)">— fixed annual investment, lump sum maturity</span></div>
+        <div id="splan-list"></div>
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 100px 100px 120px 120px auto;gap:10px;align-items:center">
+          <input id="sp-name" placeholder="Plan name (e.g. LIC Jeevan Lakshya)">
+          <input id="sp-insurer" placeholder="Company / insurer">
+          <input id="sp-annual" type="number" placeholder="Annual ₹" min="0" step="any">
+          <input id="sp-years" type="number" placeholder="Years" min="1" max="30" step="1">
+          <input id="sp-maturity" type="number" placeholder="Maturity ₹" min="0" step="any">
+          <input id="sp-start" type="date">
+          <button class="btn-sage" onclick="addStructuredPlan()">+ Add</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink4);font-family:var(--mono);margin-top:8px">Enter start date, annual premium, number of years to invest, and expected maturity amount</div>
+        <div class="err" id="sp-err"></div>
       </div>
     </div>
   </div>
@@ -1391,7 +1409,7 @@ select option{background:#fff}
 </nav>
 
 <!-- ══ FAB — quick add expense ══ -->
-<button class="mob-fab" onclick="openMobQuickAdd()" title="Add expense">+</button>
+<button class="mob-fab" id="mob-fab" style="display:none" title="Add expense">+</button>
 
 <!-- ══ QUICK ADD SHEET ══ -->
 <div class="mob-quick-add" id="mob-quick-add">
@@ -1505,6 +1523,7 @@ let S={
   sgbs:[],    // {id,name,series,units,issuePrice,currentPrice,maturity}
   ppfEpf:[],  // {id,name,type,balance,yearlyContribution}
   liabilities:[], // {id,name,type,amount} e.g. home loan, car loan
+  structuredPlans:[], // {id,name,insurer,annualAmt,totalYears,maturityAmt,startDate}
 };
 let CH={};
 
@@ -2900,6 +2919,102 @@ function addPpf(){
 function delPpf(id){S.ppfEpf=S.ppfEpf.filter(p=>p.id!==id);save();renderInvestments();renderNetWorth();}
 function livePpfBal(id,el){const p=(S.ppfEpf||[]).find(p=>p.id===id);if(p){p.balance=parseFloat(el.value)||0;save();renderNetWorth();}}
 
+/* ══ STRUCTURED PLANS ══ */
+function addStructuredPlan(){
+  const name=document.getElementById('sp-name').value.trim();
+  const insurer=document.getElementById('sp-insurer').value.trim();
+  const annualAmt=parseFloat(document.getElementById('sp-annual').value)||0;
+  const totalYears=parseInt(document.getElementById('sp-years').value)||0;
+  const maturityAmt=parseFloat(document.getElementById('sp-maturity').value)||0;
+  const startDate=document.getElementById('sp-start').value;
+  const err=document.getElementById('sp-err');
+  if(!name||annualAmt<=0||totalYears<=0||!startDate){err.textContent='Enter plan name, annual amount, years, and start date.';return;}
+  err.textContent='';
+  if(!S.structuredPlans)S.structuredPlans=[];
+  S.structuredPlans.push({id:Date.now(),name,insurer,annualAmt,totalYears,maturityAmt,startDate});
+  ['sp-name','sp-insurer','sp-annual','sp-years','sp-maturity','sp-start'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  save();renderInvestments();renderNetWorth();
+  toast('Structured plan added ✓');
+}
+
+function delStructuredPlan(id){
+  S.structuredPlans=S.structuredPlans.filter(p=>p.id!==id);
+  save();renderInvestments();renderNetWorth();
+}
+
+function renderStructuredPlans(){
+  const el=document.getElementById('splan-list');
+  if(!el)return;
+  const plans=S.structuredPlans||[];
+  if(!plans.length){
+    el.innerHTML=`<div style="font-size:13px;color:var(--ink4);padding:4px 0 10px">No structured plans added yet</div>`;
+    return;
+  }
+  const now=new Date();
+  el.innerHTML=plans.map(p=>{
+    const start=new Date(p.startDate);
+    const startYear=start.getFullYear();
+    const currentYear=now.getFullYear();
+    // Years completed = full years since start date
+    const yearsCompleted=Math.max(0,Math.min(p.totalYears,currentYear-startYear));
+    const yearsLeft=Math.max(0,p.totalYears-yearsCompleted);
+    const invested=yearsCompleted*p.annualAmt;
+    const totalCommitted=p.totalYears*p.annualAmt;
+    const pct=Math.round((yearsCompleted/p.totalYears)*100);
+    const maturityYear=startYear+p.totalYears;
+    const isComplete=yearsCompleted>=p.totalYears;
+    const roi=invested>0&&p.maturityAmt>0?((p.maturityAmt-totalCommitted)/totalCommitted*100).toFixed(1):0;
+
+    return`<div style="padding:14px 0;border-bottom:1px solid var(--cream2)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:14px;font-weight:600">${p.name}</div>
+          <div style="font-size:11px;font-family:var(--mono);color:var(--ink3);margin-top:2px">${p.insurer||'—'} · Started ${startYear} · Matures ${maturityYear}</div>
+        </div>
+        <button class="xi" onclick="delStructuredPlan(${p.id})">✕</button>
+      </div>
+
+      <!-- Progress bar -->
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-family:var(--mono);margin-bottom:5px">
+        <span style="color:var(--ink3)">Year ${yearsCompleted} of ${p.totalYears}</span>
+        <span style="color:${isComplete?'#3d6b55':'var(--ink2)};font-weight:600">${isComplete?'✓ Premium paying complete':yearsLeft+' year'+( yearsLeft!==1?'s':'')+' remaining'}</span>
+      </div>
+      <div style="background:var(--cream2);border-radius:20px;height:8px;overflow:hidden;margin-bottom:10px">
+        <div style="width:${pct}%;height:100%;border-radius:20px;background:${isComplete?'#3d6b55':'#4b3fa0'};transition:width 0.5s ease"></div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
+        <div style="background:var(--cream2);border-radius:10px;padding:9px 12px">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Annual</div>
+          <div style="font-family:var(--mono);font-weight:700;font-size:13px;color:#4b3fa0">${fmt(p.annualAmt)}</div>
+        </div>
+        <div style="background:var(--cream2);border-radius:10px;padding:9px 12px">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Invested so far</div>
+          <div style="font-family:var(--mono);font-weight:700;font-size:13px;color:#2c4a7c">${fmt(invested)}</div>
+        </div>
+        <div style="background:var(--cream2);border-radius:10px;padding:9px 12px">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Maturity value</div>
+          <div style="font-family:var(--mono);font-weight:700;font-size:13px;color:#3d6b55">${p.maturityAmt?fmt(p.maturityAmt):'—'}</div>
+        </div>
+        <div style="background:var(--cream2);border-radius:10px;padding:9px 12px">
+          <div style="font-size:9px;font-family:var(--mono);color:var(--ink3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Expected gain</div>
+          <div style="font-family:var(--mono);font-weight:700;font-size:13px;color:${p.maturityAmt>totalCommitted?'#3d6b55':'var(--rust)'}">${p.maturityAmt?fmt(p.maturityAmt-totalCommitted)+' ('+roi+'%)':'—'}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function totStructuredPlans(){
+  // Count invested-so-far as current asset value
+  const now=new Date();
+  return(S.structuredPlans||[]).reduce((s,p)=>{
+    const yearsCompleted=Math.max(0,Math.min(p.totalYears,now.getFullYear()-new Date(p.startDate).getFullYear()));
+    return s+(yearsCompleted*p.annualAmt);
+  },0);
+}
+
 /* ══ LIABILITIES ══ */
 function addLiability(){
   const type=document.getElementById('liab-type').value;
@@ -2924,7 +3039,8 @@ function totNetWorth(){
     totPortfolio()+
     ((S.ulips||[]).reduce((s,u)=>s+u.fundValue,0))+
     ((S.sgbs||[]).reduce((s,g)=>s+(g.units*goldPrice),0))+
-    ((S.ppfEpf||[]).reduce((s,p)=>s+p.balance,0));
+    ((S.ppfEpf||[]).reduce((s,p)=>s+p.balance,0))+
+    totStructuredPlans();
   const liab=(S.liabilities||[]).reduce((s,l)=>s+l.amount,0);
   return{assets,liab,net:assets-liab};
 }
@@ -2947,6 +3063,7 @@ function renderNetWorth(){
   const ulipVal=(S.ulips||[]).reduce((s,u)=>s+u.fundValue,0);
   const sgbVal=(S.sgbs||[]).reduce((s,g)=>s+(g.units*goldPrice),0);
   const ppfVal=(S.ppfEpf||[]).reduce((s,p)=>s+p.balance,0);
+  const splanVal=totStructuredPlans();
 
   const assetRows=[
     {label:'Savings corpus (FD/RD/Gold)',val:corpVal,col:'#3d6b55'},
@@ -2954,6 +3071,7 @@ function renderNetWorth(){
     {label:'ULIP plans',val:ulipVal,col:'#7c3d6b'},
     {label:'SGB (Sovereign Gold Bonds)',val:sgbVal,col:'#b8860b'},
     {label:'PPF / EPF / NPS',val:ppfVal,col:'#4b3fa0'},
+    {label:'Structured plans (invested)',val:splanVal,col:'#c4522a'},
   ].filter(r=>r.val>0);
 
   const assetsEl=document.getElementById('nw-assets');
@@ -3054,6 +3172,9 @@ function renderWealthInstruments(){
         </div>
       </div>`).join('');
   }
+
+  // Structured Plans
+  renderStructuredPlans();
 }
 
 /* ══ MOBILE NAV & UI ══ */
@@ -3290,6 +3411,7 @@ document.getElementById('sb-date').textContent=new Date().toLocaleDateString('en
 document.getElementById('e-date').value=today();
 document.getElementById('recv-date').value=today();
 syncDropdowns();renderSidebar();renderDashboard();scheduleMidnightRefresh();
+updateMobFab('dashboard');
 injectPWAManifest();
 scheduleAutoRefresh();
 // Pull latest from Firebase then start listening for real-time changes
