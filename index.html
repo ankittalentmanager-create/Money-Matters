@@ -108,7 +108,7 @@ select option{background:#fff}
 
 /* ─ ENTRY TABLE ─ */
 .t-head{display:grid;gap:10px;padding:0 0 8px;border-bottom:1.5px solid var(--cream3);font-size:10px;font-weight:600;color:var(--ink3);letter-spacing:0.08em;text-transform:uppercase;font-family:var(--mono)}
-.t-head.log-cols,.erow.log-cols{grid-template-columns:76px 1fr 120px 105px 28px}
+.t-head.log-cols,.erow.log-cols{grid-template-columns:52px 1fr 60px 105px 28px 28px}
 .erow{display:grid;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--cream2);font-size:13px;animation:rin 0.18s ease}
 .erow:last-child{border-bottom:none}
 @keyframes rin{from{opacity:0;background:var(--rust3)}to{opacity:1;background:transparent}}
@@ -324,15 +324,15 @@ select option{background:#fff}
   .t-head{display:none!important}
   .erow.log-cols{
     display:grid!important;
-    grid-template-columns:38px 1fr auto 28px!important;
+    grid-template-columns:38px 1fr auto 26px 26px!important;
     gap:0 8px!important;
     padding:10px 0!important;
     align-items:center!important;
     border-bottom:1px solid var(--cream2)!important;
   }
-  .erow.log-cols .e-date{font-size:11px!important;color:var(--ink4)!important;font-family:'Fira Code',monospace!important}
+  .erow.log-cols .e-date{font-size:11px!important;color:var(--ink4)!important;font-family:var(--mono)!important}
   .erow.log-cols .e-amt{font-size:13px!important;font-weight:700!important;text-align:right!important;color:var(--rust)!important}
-  /* Hide category tag on log to save space */
+  /* Hide mode badge on mobile to save space — show in name subline */
   .erow.log-cols span:nth-child(3){display:none!important}
 
   /* ── Received payments — compact ── */
@@ -671,8 +671,18 @@ select option{background:#fff}
             <input type="date" id="e-date">
             <input type="text" id="e-name" placeholder="What did you spend on?" onkeydown="if(event.key==='Enter')addEntry()">
           </div>
-          <div style="display:grid;grid-template-columns:1fr 120px auto;gap:10px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
             <select id="e-cat"><option value="">Category</option></select>
+            <select id="e-mode" onchange="toggleCardSelect()">
+              <option value="upi">UPI</option>
+              <option value="cash">Cash</option>
+              <option value="credit_card">Credit card</option>
+            </select>
+          </div>
+          <div id="e-card-row" style="display:none;margin-bottom:10px">
+            <select id="e-card"><option value="">Select card</option></select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
             <input type="number" id="e-amt" placeholder="₹ Amount" min="1" onkeydown="if(event.key==='Enter')addEntry()">
             <button class="btn" onclick="addEntry()">Add</button>
           </div>
@@ -746,13 +756,55 @@ select option{background:#fff}
   <div class="page" id="pg-log">
     <div class="pg-title">Expense log</div>
     <div class="pg-sub">Every rupee, every day. Filter by category or export to CSV.</div>
+
+    <!-- Expenses list -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
         <div class="filt" id="log-pills" style="margin-bottom:0"></div>
-        <button class="btn-out" onclick="exportCSV()">Export CSV ↓</button>
+        <div style="display:flex;gap:8px">
+          <select id="log-mode-filter" onchange="renderLog()" style="width:auto;padding:5px 28px 5px 10px;font-size:12px">
+            <option value="all">All methods</option>
+            <option value="upi">UPI</option>
+            <option value="cash">Cash</option>
+            <option value="credit_card">Credit card</option>
+          </select>
+          <button class="btn-out" onclick="exportCSV()">Export CSV ↓</button>
+        </div>
       </div>
-      <div class="t-head log-cols"><span>Date</span><span>Description</span><span>Category</span><span style="text-align:right">Amount</span><span></span></div>
+      <div class="t-head log-cols"><span>Date</span><span>Description</span><span>Mode</span><span style="text-align:right">Amount</span><span></span><span></span></div>
       <div id="log-list"></div>
+    </div>
+
+    <!-- Dues tracker -->
+    <div class="card mt1">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin-bottom:0">Dues tracker</div>
+        <div style="display:flex;gap:6px">
+          <div class="cc-tab-btn on" id="dues-filter-all" onclick="setDuesFilter('all',this)">All</div>
+          <div class="cc-tab-btn" id="dues-filter-owe" onclick="setDuesFilter('owe',this)">I owe</div>
+          <div class="cc-tab-btn" id="dues-filter-lent" onclick="setDuesFilter('lent',this)">They owe me</div>
+          <div class="cc-tab-btn" id="dues-filter-pending" onclick="setDuesFilter('pending',this)">Pending</div>
+        </div>
+      </div>
+      <div id="dues-summary" style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap"></div>
+      <div id="dues-list"></div>
+      <!-- Add due -->
+      <div class="divider"></div>
+      <div style="font-size:11px;font-weight:600;color:var(--ink3);font-family:var(--mono);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px">Add a due</div>
+      <div style="display:grid;grid-template-columns:110px 1fr 1fr;gap:10px;margin-bottom:10px">
+        <input type="date" id="due-date">
+        <input type="text" id="due-name" placeholder="Person / party name">
+        <input type="text" id="due-reason" placeholder="Reason (e.g. borrowed ₹500)">
+      </div>
+      <div style="display:grid;grid-template-columns:130px 1fr auto;gap:10px;align-items:center">
+        <select id="due-type">
+          <option value="owe">I owe them</option>
+          <option value="lent">They owe me</option>
+        </select>
+        <input type="number" id="due-amount" placeholder="₹ Amount" min="1">
+        <button class="btn-sage" onclick="addDue()">Add</button>
+      </div>
+      <div class="err" id="due-err"></div>
     </div>
   </div>
 
@@ -1262,6 +1314,35 @@ select option{background:#fff}
 </main>
 
 <!-- MODALS -->
+
+<!-- Edit expense modal -->
+<div class="modal-bg" id="modal-edit-entry">
+  <div class="modal">
+    <div class="modal-title">Edit expense</div>
+    <div class="modal-row r2">
+      <input type="date" id="ee-date">
+      <select id="ee-mode" onchange="toggleEditCardSelect()">
+        <option value="upi">UPI</option>
+        <option value="cash">Cash</option>
+        <option value="credit_card">Credit card</option>
+      </select>
+    </div>
+    <div class="modal-row"><input type="text" id="ee-name" placeholder="Description"></div>
+    <div class="modal-row r2">
+      <select id="ee-cat"><option value="">Category</option></select>
+      <input type="number" id="ee-amt" placeholder="₹ Amount" min="1" step="any">
+    </div>
+    <div class="modal-row" id="ee-card-row" style="display:none">
+      <select id="ee-card"><option value="">Select card</option></select>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:1.25rem">
+      <button class="btn-out" onclick="closeModal('modal-edit-entry')">Cancel</button>
+      <button class="btn-blue" onclick="saveEditEntry()">Save changes</button>
+    </div>
+    <div class="err" id="ee-err"></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="modal-add-card">
   <div class="modal">
     <div class="modal-title">Add credit card</div>
@@ -1422,6 +1503,14 @@ select option{background:#fff}
       <select id="mqa-cat"><option value="">Category</option></select>
     </div>
     <input type="text" id="mqa-name" placeholder="What did you spend on?" style="margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <select id="mqa-mode" onchange="toggleMobCardSelect()">
+        <option value="upi">UPI</option>
+        <option value="cash">Cash</option>
+        <option value="credit_card">Credit card</option>
+      </select>
+      <select id="mqa-card" style="display:none"><option value="">Select card</option></select>
+    </div>
     <div style="display:grid;grid-template-columns:1fr auto;gap:10px">
       <input type="number" id="mqa-amt" placeholder="₹ Amount" min="1" inputmode="decimal">
       <button class="btn" onclick="addMobEntry()" style="padding:11px 20px">Add</button>
@@ -1524,6 +1613,7 @@ let S={
   ppfEpf:[],  // {id,name,type,balance,yearlyContribution}
   liabilities:[], // {id,name,type,amount} e.g. home loan, car loan
   structuredPlans:[], // {id,name,insurer,annualAmt,totalYears,maturityAmt,startDate}
+  dues:[], // {id,date,name,reason,amount,type:'owe'|'lent',status:'pending'|'settled'}
 };
 let CH={};
 
@@ -1715,19 +1805,220 @@ function startEditName(){document.getElementById('sb-head-area').style.display='
 function saveName(){S.name=document.getElementById('name-inp').value.trim()||S.name;document.getElementById('sb-name').textContent=S.name||'Money Matters';document.getElementById('sb-edit').style.display='none';document.getElementById('sb-head-area').style.display='block';save();updateGreeting();}
 function renderSidebar(){const me=meEntries(),total=me.reduce((s,e)=>s+e.amt,0)+totFix();document.getElementById('sb-total').textContent=fmt(total);}
 function updateGreeting(){const h=new Date().getHours();const g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';const el=document.getElementById('greeting');if(el)el.textContent=g+(S.name?', '+S.name:'')+'. ';}
-function syncDropdowns(){const opts='<option value="">Category</option>'+S.cats.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');['e-cat','fx-c','cctx-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});}
+function syncDropdowns(){const opts='<option value="">Category</option>'+S.cats.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');['e-cat','ee-cat','fx-c','cctx-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});}
 
 /* ══ ENTRIES ══ */
+/* ══ PAYMENT MODE HELPERS ══ */
+const MODE_LABELS={upi:'UPI',cash:'Cash',credit_card:'CC'};
+const MODE_COLORS={upi:'#2c4a7c',cash:'#3d6b55',credit_card:'#c4522a'};
+
+function toggleCardSelect(){
+  const mode=document.getElementById('e-mode')?.value;
+  const row=document.getElementById('e-card-row');
+  if(!row)return;
+  row.style.display=mode==='credit_card'?'block':'none';
+  if(mode==='credit_card') syncCardDropdown('e-card');
+}
+function toggleEditCardSelect(){
+  const mode=document.getElementById('ee-mode')?.value;
+  const row=document.getElementById('ee-card-row');
+  if(!row)return;
+  row.style.display=mode==='credit_card'?'block':'none';
+  if(mode==='credit_card') syncCardDropdown('ee-card');
+}
+function toggleMobCardSelect(){
+  const mode=document.getElementById('mqa-mode')?.value;
+  const sel=document.getElementById('mqa-card');
+  if(!sel)return;
+  sel.style.display=mode==='credit_card'?'block':'none';
+  if(mode==='credit_card') syncCardDropdown('mqa-card');
+}
+function syncCardDropdown(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.innerHTML='<option value="">Select card</option>'+S.cards.map(c=>`<option value="${c.id}">${c.name} (****${c.last4})</option>`).join('');
+}
+
+function _addEntryToCard(cardId, date, name, cat, amt){
+  const card=S.cards.find(c=>c.id==cardId);
+  if(!card)return;
+  card.txns.unshift({id:Date.now(),date,type:'expense',desc:name,cat,amt});
+  card.due+=amt;
+}
+function _removeEntryFromCard(entry){
+  if(entry.paymentMode==='credit_card'&&entry.linkedCardId){
+    const card=S.cards.find(c=>c.id==entry.linkedCardId);
+    if(card){
+      // Remove the matching auto-synced transaction
+      const idx=card.txns.findIndex(t=>t.syncedFromEntry===entry.id);
+      if(idx!==-1){card.due=Math.max(0,card.due-card.txns[idx].amt);card.txns.splice(idx,1);}
+    }
+  }
+}
+
 function addEntry(){
-  const date=document.getElementById('e-date').value,name=document.getElementById('e-name').value.trim(),cat=document.getElementById('e-cat').value,amt=parseFloat(document.getElementById('e-amt').value);
+  const date=document.getElementById('e-date').value;
+  const name=document.getElementById('e-name').value.trim();
+  const cat=document.getElementById('e-cat').value;
+  const amt=parseFloat(document.getElementById('e-amt').value);
+  const mode=document.getElementById('e-mode')?.value||'upi';
+  const cardId=mode==='credit_card'?document.getElementById('e-card')?.value:null;
   const err=document.getElementById('e-err');
   if(!date||!name||!cat||isNaN(amt)||amt<=0){err.textContent='Please fill all fields.';return;}
-  err.textContent='';S.entries.unshift({id:Date.now(),date,name,cat,amt});
+  if(mode==='credit_card'&&!cardId){err.textContent='Select a credit card.';return;}
+  err.textContent='';
+  const entry={id:Date.now(),date,name,cat,amt,paymentMode:mode,linkedCardId:cardId||null};
+  S.entries.unshift(entry);
+  // Auto-sync to credit card
+  if(mode==='credit_card'&&cardId){
+    const card=S.cards.find(c=>c.id==cardId);
+    if(card){card.txns.unshift({id:Date.now()+1,date,type:'expense',desc:name,cat,amt,syncedFromEntry:entry.id});card.due+=amt;}
+  }
   document.getElementById('e-name').value='';document.getElementById('e-amt').value='';document.getElementById('e-cat').value='';
-  save();renderDashboard();toast(fmt(amt)+' added ✓');
+  save();renderDashboard();renderLog();toast(fmt(amt)+' added ✓');
 }
-function delEntry(id){if(!confirm('Remove this expense?'))return;S.entries=S.entries.filter(e=>e.id!==id);save();renderDashboard();renderLog();toast('Removed');}
+
+function delEntry(id){
+  if(!confirm('Remove this expense?'))return;
+  const entry=S.entries.find(e=>e.id===id);
+  if(entry)_removeEntryFromCard(entry);
+  S.entries=S.entries.filter(e=>e.id!==id);
+  save();renderDashboard();renderLog();toast('Removed');
+}
+
+let _editingEntryId=null;
+function openEditEntry(id){
+  const entry=S.entries.find(e=>e.id===id);
+  if(!entry)return;
+  _editingEntryId=id;
+  document.getElementById('ee-date').value=entry.date;
+  document.getElementById('ee-name').value=entry.name;
+  document.getElementById('ee-amt').value=entry.amt;
+  // Populate category
+  const catOpts='<option value="">Category</option>'+S.cats.map(c=>`<option value="${c.name}"${c.name===entry.cat?' selected':''}>${c.name}</option>`).join('');
+  document.getElementById('ee-cat').innerHTML=catOpts;
+  // Mode
+  const mode=entry.paymentMode||'upi';
+  document.getElementById('ee-mode').value=mode;
+  syncCardDropdown('ee-card');
+  const cardRow=document.getElementById('ee-card-row');
+  cardRow.style.display=mode==='credit_card'?'block':'none';
+  if(mode==='credit_card'&&entry.linkedCardId){
+    const opt=document.querySelector(`#ee-card option[value="${entry.linkedCardId}"]`);
+    if(opt)opt.selected=true;
+  }
+  document.getElementById('ee-err').textContent='';
+  openModal('modal-edit-entry');
+}
+
+function saveEditEntry(){
+  const entry=S.entries.find(e=>e.id===_editingEntryId);
+  if(!entry)return;
+  const date=document.getElementById('ee-date').value;
+  const name=document.getElementById('ee-name').value.trim();
+  const cat=document.getElementById('ee-cat').value;
+  const amt=parseFloat(document.getElementById('ee-amt').value);
+  const mode=document.getElementById('ee-mode').value;
+  const cardId=mode==='credit_card'?document.getElementById('ee-card').value:null;
+  const err=document.getElementById('ee-err');
+  if(!date||!name||!cat||isNaN(amt)||amt<=0){err.textContent='Fill all fields.';return;}
+  if(mode==='credit_card'&&!cardId){err.textContent='Select a card.';return;}
+  // Remove old CC sync
+  _removeEntryFromCard(entry);
+  // Update entry
+  entry.date=date;entry.name=name;entry.cat=cat;entry.amt=amt;
+  entry.paymentMode=mode;entry.linkedCardId=cardId||null;
+  // Re-sync to CC if needed
+  if(mode==='credit_card'&&cardId){
+    const card=S.cards.find(c=>c.id==cardId);
+    if(card){card.txns.unshift({id:Date.now(),date,type:'expense',desc:name,cat,amt,syncedFromEntry:entry.id});card.due+=amt;}
+  }
+  save();closeModal('modal-edit-entry');renderDashboard();renderLog();toast('Entry updated ✓');
+}
+
 function setFilter(f){S.logFilter=f;renderLog();}
+function setDuesFilter(f,el){
+  S.duesFilter=f;
+  document.querySelectorAll('#dues-filter-all,#dues-filter-owe,#dues-filter-lent,#dues-filter-pending').forEach(b=>b.classList.remove('on'));
+  if(el)el.classList.add('on');
+  renderDues();
+}
+
+/* ══ DUES ══ */
+function addDue(){
+  const date=document.getElementById('due-date').value||today();
+  const name=document.getElementById('due-name').value.trim();
+  const reason=document.getElementById('due-reason').value.trim();
+  const type=document.getElementById('due-type').value;
+  const amount=parseFloat(document.getElementById('due-amount').value);
+  const err=document.getElementById('due-err');
+  if(!name||isNaN(amount)||amount<=0){err.textContent='Enter name and amount.';return;}
+  err.textContent='';
+  if(!S.dues)S.dues=[];
+  S.dues.unshift({id:Date.now(),date,name,reason,type,amount,status:'pending'});
+  ['due-name','due-reason','due-amount'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('due-date').value=today();
+  save();renderDues();toast('Due added ✓');
+}
+function settleDue(id){
+  const d=(S.dues||[]).find(d=>d.id===id);
+  if(d){d.status=d.status==='settled'?'pending':'settled';save();renderDues();}
+}
+function delDue(id){
+  if(!confirm('Remove this due?'))return;
+  S.dues=(S.dues||[]).filter(d=>d.id!==id);
+  save();renderDues();
+}
+function renderDues(){
+  const filter=S.duesFilter||'all';
+  let dues=S.dues||[];
+  if(filter==='owe')dues=dues.filter(d=>d.type==='owe');
+  else if(filter==='lent')dues=dues.filter(d=>d.type==='lent');
+  else if(filter==='pending')dues=dues.filter(d=>d.status==='pending');
+
+  // Summary chips
+  const allDues=S.dues||[];
+  const totalOwe=allDues.filter(d=>d.type==='owe'&&d.status==='pending').reduce((s,d)=>s+d.amount,0);
+  const totalLent=allDues.filter(d=>d.type==='lent'&&d.status==='pending').reduce((s,d)=>s+d.amount,0);
+  const sumEl=document.getElementById('dues-summary');
+  if(sumEl)sumEl.innerHTML=`
+    <div style="background:var(--rust3);border-radius:10px;padding:8px 14px;display:flex;flex-direction:column">
+      <span style="font-size:9px;font-family:var(--mono);color:var(--rust);text-transform:uppercase;letter-spacing:0.06em">You owe</span>
+      <span style="font-size:16px;font-weight:700;font-family:var(--mono);color:var(--rust)">${fmt(totalOwe)}</span>
+    </div>
+    <div style="background:var(--sage3);border-radius:10px;padding:8px 14px;display:flex;flex-direction:column">
+      <span style="font-size:9px;font-family:var(--mono);color:var(--sage);text-transform:uppercase;letter-spacing:0.06em">Owed to you</span>
+      <span style="font-size:16px;font-weight:700;font-family:var(--mono);color:var(--sage)">${fmt(totalLent)}</span>
+    </div>`;
+
+  const listEl=document.getElementById('dues-list');
+  if(!listEl)return;
+  if(!dues.length){listEl.innerHTML=`<div class="empty"><span class="empty-icon">◎</span>No dues${filter!=='all'?' in this filter':' yet'}</div>`;return;}
+  listEl.innerHTML=dues.map(d=>{
+    const isOwe=d.type==='owe';
+    const settled=d.status==='settled';
+    const col=isOwe?'var(--rust)':'var(--sage)';
+    const bgCol=isOwe?'var(--rust3)':'var(--sage3)';
+    const dt=new Date(d.date+'T00:00:00');
+    return`<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--cream2);${settled?'opacity:0.45':''}">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <div style="width:36px;height:36px;border-radius:10px;background:${bgCol};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${col};flex-shrink:0">${isOwe?'OWE':'LENT'}</div>
+        <div style="min-width:0">
+          <div style="font-size:13px;font-weight:600">${d.name}</div>
+          <div style="font-size:11px;color:var(--ink3);font-family:var(--mono)">${d.reason||'—'} · ${pad(dt.getDate())}/${pad(dt.getMonth()+1)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <div style="text-align:right">
+          <div style="font-family:var(--mono);font-weight:700;font-size:14px;color:${col}">${fmt(d.amount)}</div>
+          <div style="font-size:10px;font-family:var(--mono);color:${settled?'var(--sage)':'var(--ink4)'};">${settled?'✓ Settled':'Pending'}</div>
+        </div>
+        <button onclick="settleDue(${d.id})" style="background:${settled?'var(--cream2)':'var(--sage3)'};color:${settled?'var(--ink3)':'var(--sage)'};border:none;border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--mono);white-space:nowrap">${settled?'Reopen':'Settle'}</button>
+        <button class="xi" onclick="delDue(${d.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 /* ══ INCOME ══ */
 function addIncome(){const src=document.getElementById('inc-src').value.trim(),amt=parseFloat(document.getElementById('inc-amt').value),err=document.getElementById('inc-err');if(!src||isNaN(amt)||amt<=0){err.textContent='Enter source and amount.';return;}err.textContent='';S.incomes.push({id:Date.now(),source:src,amt});document.getElementById('inc-src').value='';document.getElementById('inc-amt').value='';save();renderIncome();renderDashboard();}
@@ -2455,8 +2746,34 @@ function renderTrends(){
 function renderLog(){
   const cats=['All',...new Set(S.entries.map(e=>e.cat))];
   document.getElementById('log-pills').innerHTML=cats.map(c=>`<div class="pill${S.logFilter===c?' on':''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')"> ${c}</div>`).join('');
-  const filtered=S.logFilter==='All'?S.entries:S.entries.filter(e=>e.cat===S.logFilter);
-  document.getElementById('log-list').innerHTML=!filtered.length?`<div class="empty"><span class="empty-icon">≡</span>No expenses yet</div>`:filtered.map(e=>{const col=catCol(e.cat),d=new Date(e.date+'T00:00:00');return`<div class="erow log-cols"><span class="e-date">${pad(d.getDate())}/${pad(d.getMonth()+1)}</span><span>${e.name}</span><span><span class="tag" style="background:${rgba(col,0.12)};color:${col}">${e.cat}</span></span><span class="e-amt" style="color:var(--rust)">${fmt(e.amt)}</span><button class="xi" onclick="delEntry(${e.id})">✕</button></div>`;}).join('');
+
+  const modeFilter=document.getElementById('log-mode-filter')?.value||'all';
+  let filtered=S.logFilter==='All'?S.entries:S.entries.filter(e=>e.cat===S.logFilter);
+  if(modeFilter!=='all')filtered=filtered.filter(e=>(e.paymentMode||'upi')===modeFilter);
+
+  document.getElementById('log-list').innerHTML=!filtered.length
+    ?`<div class="empty"><span class="empty-icon">≡</span>No expenses yet</div>`
+    :filtered.map(e=>{
+      const col=catCol(e.cat),d=new Date(e.date+'T00:00:00');
+      const mode=e.paymentMode||'upi';
+      const modeCol=MODE_COLORS[mode]||'#8a8278';
+      const modeLabel=MODE_LABELS[mode]||mode;
+      return`<div class="erow log-cols" style="grid-template-columns:38px 1fr 52px auto 26px 26px">
+        <span class="e-date">${pad(d.getDate())}/${pad(d.getMonth()+1)}</span>
+        <div>
+          <div style="font-size:13px">${e.name}</div>
+          <span class="tag" style="background:${rgba(col,0.12)};color:${col};font-size:10px">${e.cat}</span>
+        </div>
+        <span style="display:inline-flex;align-items:center">
+          <span style="font-size:10px;font-family:var(--mono);background:${rgba(modeCol,0.12)};color:${modeCol};padding:2px 6px;border-radius:20px;white-space:nowrap">${modeLabel}</span>
+        </span>
+        <span class="e-amt" style="color:var(--rust)">${fmt(e.amt)}</span>
+        <button onclick="openEditEntry(${e.id})" style="background:none;border:none;cursor:pointer;color:var(--ink4);font-size:12px;border-radius:6px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center" title="Edit">✎</button>
+        <button class="xi" onclick="delEntry(${e.id})">✕</button>
+      </div>`;
+    }).join('');
+
+  renderDues();
 }
 
 /* INCOME */
@@ -3229,13 +3546,14 @@ function mobNav(pageId, btnId){
 }
 
 function openMobQuickAdd(){
-  // Sync category dropdown
   const opts='<option value="">Category</option>'+S.cats.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
   document.getElementById('mqa-cat').innerHTML=opts;
   document.getElementById('mqa-date').value=today();
   document.getElementById('mqa-name').value='';
   document.getElementById('mqa-amt').value='';
   document.getElementById('mqa-err').textContent='';
+  document.getElementById('mqa-mode').value='upi';
+  document.getElementById('mqa-card').style.display='none';
   document.getElementById('mob-quick-add').classList.add('on');
   setTimeout(()=>document.getElementById('mqa-name').focus(),300);
 }
@@ -3247,11 +3565,19 @@ function addMobEntry(){
   const name=document.getElementById('mqa-name').value.trim();
   const cat=document.getElementById('mqa-cat').value;
   const amt=parseFloat(document.getElementById('mqa-amt').value);
+  const mode=document.getElementById('mqa-mode').value||'upi';
+  const cardId=mode==='credit_card'?document.getElementById('mqa-card').value:null;
   const err=document.getElementById('mqa-err');
   if(!date||!name||!cat||isNaN(amt)||amt<=0){err.textContent='Fill all fields.';return;}
+  if(mode==='credit_card'&&!cardId){err.textContent='Select a card.';return;}
   err.textContent='';
-  S.entries.unshift({id:Date.now(),date,name,cat,amt});
-  save();renderDashboard();
+  const entry={id:Date.now(),date,name,cat,amt,paymentMode:mode,linkedCardId:cardId||null};
+  S.entries.unshift(entry);
+  if(mode==='credit_card'&&cardId){
+    const card=S.cards.find(c=>c.id==cardId);
+    if(card){card.txns.unshift({id:Date.now()+1,date,type:'expense',desc:name,cat,amt,syncedFromEntry:entry.id});card.due+=amt;}
+  }
+  save();renderDashboard();renderLog();
   closeMobQuickAdd();
   toast(fmt(amt)+' added ✓');
 }
@@ -3410,6 +3736,8 @@ document.getElementById('sb-name').textContent=S.name||'Money Matters';
 document.getElementById('sb-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
 document.getElementById('e-date').value=today();
 document.getElementById('recv-date').value=today();
+const dueDateEl=document.getElementById('due-date');
+if(dueDateEl)dueDateEl.value=today();
 syncDropdowns();renderSidebar();renderDashboard();scheduleMidnightRefresh();
 updateMobFab('dashboard');
 injectPWAManifest();
